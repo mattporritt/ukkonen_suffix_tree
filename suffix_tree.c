@@ -1,5 +1,6 @@
 // A C program to implement Ukkonen's Suffix Tree Construction
-// And then build generalized suffix tree
+// Here we build generalized suffix tree for two strings
+// And then we find longest common substring of the two input strings
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -53,6 +54,7 @@ int leafEnd = -1;
 int *rootEnd = NULL;
 int *splitEnd = NULL;
 int size = -1; //Length of input string
+int size1 = 0; //Size of 1st string
 
 Node *newNode(int start, int *end)
 {
@@ -249,7 +251,8 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     if (n->start != -1) //A non-root node
     {
         //Print the label on edge from parent to current node
-        print(n->start, *(n->end));
+        //Uncomment below line to print suffix tree
+        //print(n->start, *(n->end));
     }
     int leaf = 1;
     int i;
@@ -257,8 +260,9 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     {
         if (n->children[i] != NULL)
         {
-            if (leaf == 1 && n->start != -1)
-                printf(" [%d]\n", n->suffixIndex);
+            //Uncomment below two lines to print suffix index
+         //   if (leaf == 1 && n->start != -1)
+           //     printf(" [%d]\n", n->suffixIndex);
 
             //Current node is not a leaf as it has outgoing
             //edges from it.
@@ -271,14 +275,15 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     {
         for(i= n->start; i<= *(n->end); i++)
         {
-            if(text[i] == '#') //Trim unwanted characters
+            if(text[i] == '#')
             {
                 n->end = (int*) malloc(sizeof(int));
                 *(n->end) = i;
             }
         }
         n->suffixIndex = size - labelHeight;
-        printf(" [%d]\n", n->suffixIndex);
+        //Uncomment below line to print suffix index
+       // printf(" [%d]\n", n->suffixIndex);
     }
 }
 
@@ -318,15 +323,114 @@ void buildSuffixTree()
         extendSuffixTree(i);
     int labelHeight = 0;
     setSuffixIndexByDFS(root, labelHeight);
+}
 
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
+int doTraversal(Node *n, int labelHeight, int* maxHeight,
+int* substringStartIndex)
+{
+    if(n == NULL)
+    {
+        return;
+    }
+    int i=0;
+    int ret = -1;
+    if(n->suffixIndex < 0) //If it is internal node
+    {
+        for (i = 0; i < MAX_CHAR; i++)
+        {
+            if(n->children[i] != NULL)
+            {
+                ret = doTraversal(n->children[i], labelHeight +
+                    edgeLength(n->children[i]),
+                    maxHeight, substringStartIndex);
+
+                if(n->suffixIndex == -1)
+                    n->suffixIndex = ret;
+                else if((n->suffixIndex == -2 && ret == -3) ||
+                    (n->suffixIndex == -3 && ret == -2) ||
+                    n->suffixIndex == -4)
+                {
+                    n->suffixIndex = -4;//Mark node as XY
+                    //Keep track of deepest node
+                    if(*maxHeight < labelHeight)
+                    {
+                        *maxHeight = labelHeight;
+                        *substringStartIndex = *(n->end) -
+                            labelHeight + 1;
+                    }
+                }
+            }
+        }
+    }
+    else if(n->suffixIndex > -1 && n->suffixIndex < size1)//suffix of X
+        return -2;//Mark node as X
+    else if(n->suffixIndex >= size1)//suffix of Y
+        return -3;//Mark node as Y
+    return n->suffixIndex;
+}
+
+void getLongestCommonSubstring()
+{
+    int maxHeight = 0;
+    int substringStartIndex = 0;
+    doTraversal(root, 0, &maxHeight, &substringStartIndex);
+
+    int k;
+    for (k=0; k<maxHeight; k++)
+        printf("%c", text[k + substringStartIndex]);
+    if(k == 0)
+        printf("No common substring");
+    else
+        printf(", of length: %d",maxHeight);
+    printf("\n");
 }
 
 // driver program to test above functions
 int main(int argc, char *argv[])
 {
-//  strcpy(text, "xabxac#abcabxabcd$"); buildSuffixTree();
-    strcpy(text, "xabxa#babxba$"); buildSuffixTree();
+    size1 = 7;
+    printf("Longest Common Substring in xabxac and abcabxabcd is: ");
+    strcpy(text, "xabxac#abcabxabcd$"); buildSuffixTree();
+    getLongestCommonSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    size1 = 10;
+    printf("Longest Common Substring in xabxaabxa and babxba is: ");
+    strcpy(text, "xabxaabxa#babxba$"); buildSuffixTree();
+    getLongestCommonSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    size1 = 14;
+    printf("Longest Common Substring in GeeksforGeeks and GeeksQuiz is: ");
+    strcpy(text, "GeeksforGeeks#GeeksQuiz$"); buildSuffixTree();
+    getLongestCommonSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    size1 = 26;
+    printf("Longest Common Substring in OldSite:GeeksforGeeks.org");
+    printf(" and NewSite:GeeksQuiz.com is: ");
+    strcpy(text, "OldSite:GeeksforGeeks.org#NewSite:GeeksQuiz.com$");
+    buildSuffixTree();
+    getLongestCommonSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    size1 = 6;
+    printf("Longest Common Substring in abcde and fghie is: ");
+    strcpy(text, "abcde#fghie$"); buildSuffixTree();
+    getLongestCommonSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    size1 = 6;
+    printf("Longest Common Substring in pqrst and uvwxyz is: ");
+    strcpy(text, "pqrst#uvwxyz$"); buildSuffixTree();
+    getLongestCommonSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
     return 0;
 }
