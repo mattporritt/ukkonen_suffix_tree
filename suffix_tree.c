@@ -1,5 +1,5 @@
 // A C program to implement Ukkonen's Suffix Tree Construction
-// And then find Longest Repeated Substring
+// And and then create suffix array in linear time
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -313,8 +313,7 @@ void buildSuffixTree()
     setSuffixIndexByDFS(root, labelHeight);
 }
 
-void doTraversal(Node *n, int labelHeight, int* maxHeight,
-int* substringStartIndex)
+void doTraversal(Node *n, int suffixArray[], int *idx)
 {
     if(n == NULL)
     {
@@ -327,86 +326,98 @@ int* substringStartIndex)
         {
             if(n->children[i] != NULL)
             {
-                doTraversal(n->children[i], labelHeight +
-                                edgeLength(n->children[i]), maxHeight,
-                                 substringStartIndex);
+                doTraversal(n->children[i], suffixArray, idx);
             }
         }
     }
-    else if(n->suffixIndex > -1 &&
-                (*maxHeight < labelHeight - edgeLength(n)))
+    //If it is Leaf node other than "$" label
+    else if(n->suffixIndex > -1 && n->suffixIndex < size)
     {
-        *maxHeight = labelHeight - edgeLength(n);
-        *substringStartIndex = n->suffixIndex;
+        suffixArray[(*idx)++] = n->suffixIndex;
     }
 }
 
-void getLongestRepeatedSubstring()
+void buildSuffixArray(int suffixArray[])
 {
-    int maxHeight = 0;
-    int substringStartIndex = 0;
-    doTraversal(root, 0, &maxHeight, &substringStartIndex);
-//  printf("maxHeight %d, substringStartIndex %d\n", maxHeight,
-//           substringStartIndex);
-    printf("Longest Repeated Substring in %s is: ", text);
-    int k;
-    for (k=0; k<maxHeight; k++)
-        printf("%c", text[k + substringStartIndex]);
-    if(k == 0)
-        printf("No repeated substring");
+    int i = 0;
+    for(i=0; i< size; i++)
+        suffixArray[i] = -1;
+    int idx = 0;
+    doTraversal(root, suffixArray, &idx);
+    printf("Suffix Array for String ");
+    for(i=0; i<size; i++)
+        printf("%c", text[i]);
+    printf(" is: ");
+    for(i=0; i<size; i++)
+        printf("%d ", suffixArray[i]);
     printf("\n");
 }
 
 // driver program to test above functions
 int main(int argc, char *argv[])
 {
-    strcpy(text, "GEEKSFORGEEKS$");
+    strcpy(text, "banana$");
     buildSuffixTree();
-    getLongestRepeatedSubstring();
+    size--;
+    int *suffixArray =(int*) malloc(sizeof(int) * size);
+    buildSuffixArray(suffixArray);
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
+    free(suffixArray);
+
+    strcpy(text, "GEEKSFORGEEKS$");
+    buildSuffixTree();
+    size--;
+    suffixArray =(int*) malloc(sizeof(int) * size);
+    buildSuffixArray(suffixArray);
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+    free(suffixArray);
 
     strcpy(text, "AAAAAAAAAA$");
     buildSuffixTree();
-    getLongestRepeatedSubstring();
+    size--;
+    suffixArray =(int*) malloc(sizeof(int) * size);
+    buildSuffixArray(suffixArray);
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
+    free(suffixArray);
 
     strcpy(text, "ABCDEFG$");
     buildSuffixTree();
-    getLongestRepeatedSubstring();
+    size--;
+    suffixArray =(int*) malloc(sizeof(int) * size);
+    buildSuffixArray(suffixArray);
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
+    free(suffixArray);
 
     strcpy(text, "ABABABA$");
     buildSuffixTree();
-    getLongestRepeatedSubstring();
+    size--;
+    suffixArray =(int*) malloc(sizeof(int) * size);
+    buildSuffixArray(suffixArray);
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
+    free(suffixArray);
 
-    strcpy(text, "ATCGATCGA$");
+    strcpy(text, "abcabxabcd$");
     buildSuffixTree();
-    getLongestRepeatedSubstring();
+    size--;
+    suffixArray =(int*) malloc(sizeof(int) * size);
+    buildSuffixArray(suffixArray);
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
+    free(suffixArray);
 
-    strcpy(text, "banana$");
+    strcpy(text, "CCAAACCCGATTA$");
     buildSuffixTree();
-    getLongestRepeatedSubstring();
+    size--;
+    suffixArray =(int*) malloc(sizeof(int) * size);
+    buildSuffixArray(suffixArray);
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
-
-    strcpy(text, "abcpqrabpqpq$");
-    buildSuffixTree();
-    getLongestRepeatedSubstring();
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-
-    strcpy(text, "pqrpqpqabab$");
-    buildSuffixTree();
-    getLongestRepeatedSubstring();
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
+    free(suffixArray);
 
     return 0;
 }
