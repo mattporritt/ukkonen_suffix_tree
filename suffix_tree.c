@@ -1,5 +1,5 @@
 // A C program to implement Ukkonen's Suffix Tree Construction
-// And and then create suffix array in linear time
+// And then build generalized suffix tree
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -233,8 +233,10 @@ void extendSuffixTree(int pos)
 void print(int i, int j)
 {
     int k;
-    for (k=i; k<=j; k++)
+    for (k=i; k<=j && text[k] != '#'; k++)
         printf("%c", text[k]);
+    if(k<=j)
+        printf("#");
 }
 
 //Print the suffix tree as well along with setting suffix index
@@ -247,8 +249,7 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     if (n->start != -1) //A non-root node
     {
         //Print the label on edge from parent to current node
-        //Uncomment below line to print suffix tree
-       // print(n->start, *(n->end));
+        print(n->start, *(n->end));
     }
     int leaf = 1;
     int i;
@@ -256,9 +257,8 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     {
         if (n->children[i] != NULL)
         {
-            //Uncomment below two lines to print suffix index
-           // if (leaf == 1 && n->start != -1)
-             //   printf(" [%d]\n", n->suffixIndex);
+            if (leaf == 1 && n->start != -1)
+                printf(" [%d]\n", n->suffixIndex);
 
             //Current node is not a leaf as it has outgoing
             //edges from it.
@@ -269,9 +269,16 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     }
     if (leaf == 1)
     {
+        for(i= n->start; i<= *(n->end); i++)
+        {
+            if(text[i] == '#') //Trim unwanted characters
+            {
+                n->end = (int*) malloc(sizeof(int));
+                *(n->end) = i;
+            }
+        }
         n->suffixIndex = size - labelHeight;
-        //Uncomment below line to print suffix index
-        //printf(" [%d]\n", n->suffixIndex);
+        printf(" [%d]\n", n->suffixIndex);
     }
 }
 
@@ -311,113 +318,15 @@ void buildSuffixTree()
         extendSuffixTree(i);
     int labelHeight = 0;
     setSuffixIndexByDFS(root, labelHeight);
-}
 
-void doTraversal(Node *n, int suffixArray[], int *idx)
-{
-    if(n == NULL)
-    {
-        return;
-    }
-    int i=0;
-    if(n->suffixIndex == -1) //If it is internal node
-    {
-        for (i = 0; i < MAX_CHAR; i++)
-        {
-            if(n->children[i] != NULL)
-            {
-                doTraversal(n->children[i], suffixArray, idx);
-            }
-        }
-    }
-    //If it is Leaf node other than "$" label
-    else if(n->suffixIndex > -1 && n->suffixIndex < size)
-    {
-        suffixArray[(*idx)++] = n->suffixIndex;
-    }
-}
-
-void buildSuffixArray(int suffixArray[])
-{
-    int i = 0;
-    for(i=0; i< size; i++)
-        suffixArray[i] = -1;
-    int idx = 0;
-    doTraversal(root, suffixArray, &idx);
-    printf("Suffix Array for String ");
-    for(i=0; i<size; i++)
-        printf("%c", text[i]);
-    printf(" is: ");
-    for(i=0; i<size; i++)
-        printf("%d ", suffixArray[i]);
-    printf("\n");
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
 }
 
 // driver program to test above functions
 int main(int argc, char *argv[])
 {
-    strcpy(text, "banana$");
-    buildSuffixTree();
-    size--;
-    int *suffixArray =(int*) malloc(sizeof(int) * size);
-    buildSuffixArray(suffixArray);
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-    free(suffixArray);
-
-    strcpy(text, "GEEKSFORGEEKS$");
-    buildSuffixTree();
-    size--;
-    suffixArray =(int*) malloc(sizeof(int) * size);
-    buildSuffixArray(suffixArray);
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-    free(suffixArray);
-
-    strcpy(text, "AAAAAAAAAA$");
-    buildSuffixTree();
-    size--;
-    suffixArray =(int*) malloc(sizeof(int) * size);
-    buildSuffixArray(suffixArray);
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-    free(suffixArray);
-
-    strcpy(text, "ABCDEFG$");
-    buildSuffixTree();
-    size--;
-    suffixArray =(int*) malloc(sizeof(int) * size);
-    buildSuffixArray(suffixArray);
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-    free(suffixArray);
-
-    strcpy(text, "ABABABA$");
-    buildSuffixTree();
-    size--;
-    suffixArray =(int*) malloc(sizeof(int) * size);
-    buildSuffixArray(suffixArray);
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-    free(suffixArray);
-
-    strcpy(text, "abcabxabcd$");
-    buildSuffixTree();
-    size--;
-    suffixArray =(int*) malloc(sizeof(int) * size);
-    buildSuffixArray(suffixArray);
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-    free(suffixArray);
-
-    strcpy(text, "CCAAACCCGATTA$");
-    buildSuffixTree();
-    size--;
-    suffixArray =(int*) malloc(sizeof(int) * size);
-    buildSuffixArray(suffixArray);
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-    free(suffixArray);
-
+//  strcpy(text, "xabxac#abcabxabcd$"); buildSuffixTree();
+    strcpy(text, "xabxa#babxba$"); buildSuffixTree();
     return 0;
 }
