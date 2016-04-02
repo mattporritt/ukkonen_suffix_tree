@@ -1,5 +1,5 @@
 // A C program to implement Ukkonen's Suffix Tree Construction
-// And find all locations of a pattern in string
+// And then find Longest Repeated Substring
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -313,89 +313,48 @@ void buildSuffixTree()
     setSuffixIndexByDFS(root, labelHeight);
 }
 
-int traverseEdge(char *str, int idx, int start, int end)
-{
-    int k = 0;
-    //Traverse the edge with character by character matching
-    for(k=start; k<=end && str[idx] != '\0'; k++, idx++)
-    {
-        if(text[k] != str[idx])
-            return -1;  // mo match
-    }
-    if(str[idx] == '\0')
-        return 1;  // match
-    return 0;  // more characters yet to match
-}
-
-int doTraversalToCountLeaf(Node *n)
+void doTraversal(Node *n, int labelHeight, int* maxHeight,
+int* substringStartIndex)
 {
     if(n == NULL)
-        return 0;
-    if(n->suffixIndex > -1)
     {
-        printf("\nFound at position: %d", n->suffixIndex);
-        return 1;
+        return;
     }
-    int count = 0;
-    int i = 0;
-    for (i = 0; i < MAX_CHAR; i++)
+    int i=0;
+    if(n->suffixIndex == -1) //If it is internal node
     {
-        if(n->children[i] != NULL)
+        for (i = 0; i < MAX_CHAR; i++)
         {
-            count += doTraversalToCountLeaf(n->children[i]);
+            if(n->children[i] != NULL)
+            {
+                doTraversal(n->children[i], labelHeight +
+                                edgeLength(n->children[i]), maxHeight,
+                                 substringStartIndex);
+            }
         }
     }
-    return count;
-}
-
-int countLeaf(Node *n)
-{
-    if(n == NULL)
-        return 0;
-    return doTraversalToCountLeaf(n);
-}
-
-int doTraversal(Node *n, char* str, int idx)
-{
-    if(n == NULL)
+    else if(n->suffixIndex > -1 &&
+                (*maxHeight < labelHeight - edgeLength(n)))
     {
-        return -1; // no match
+        *maxHeight = labelHeight - edgeLength(n);
+        *substringStartIndex = n->suffixIndex;
     }
-    int res = -1;
-    //If node n is not root node, then traverse edge
-    //from node n's parent to node n.
-    if(n->start != -1)
-    {
-        res = traverseEdge(str, idx, n->start, *(n->end));
-        if(res == -1)  //no match
-            return -1;
-        if(res == 1) //match
-        {
-            if(n->suffixIndex > -1)
-                printf("\nsubstring count: 1 and position: %d",
-                               n->suffixIndex);
-            else
-                printf("\nsubstring count: %d", countLeaf(n));
-            return 1;
-        }
-    }
-    //Get the character index to search
-    idx = idx + edgeLength(n);
-    //If there is an edge from node n going out
-    //with current character str[idx], travrse that edge
-    if(n->children[str[idx]] != NULL)
-        return doTraversal(n->children[str[idx]], str, idx);
-    else
-        return -1;  // no match
 }
 
-void checkForSubString(char* str)
+void getLongestRepeatedSubstring()
 {
-    int res = doTraversal(root, str, 0);
-    if(res == 1)
-        printf("\nPattern <%s> is a Substring\n", str);
-    else
-        printf("\nPattern <%s> is NOT a Substring\n", str);
+    int maxHeight = 0;
+    int substringStartIndex = 0;
+    doTraversal(root, 0, &maxHeight, &substringStartIndex);
+//  printf("maxHeight %d, substringStartIndex %d\n", maxHeight,
+//           substringStartIndex);
+    printf("Longest Repeated Substring in %s is: ", text);
+    int k;
+    for (k=0; k<maxHeight; k++)
+        printf("%c", text[k + substringStartIndex]);
+    if(k == 0)
+        printf("No repeated substring");
+    printf("\n");
 }
 
 // driver program to test above functions
@@ -403,36 +362,49 @@ int main(int argc, char *argv[])
 {
     strcpy(text, "GEEKSFORGEEKS$");
     buildSuffixTree();
-    printf("Text: GEEKSFORGEEKS, Pattern to search: GEEKS");
-    checkForSubString("GEEKS");
-    printf("\n\nText: GEEKSFORGEEKS, Pattern to search: GEEK1");
-    checkForSubString("GEEK1");
-    printf("\n\nText: GEEKSFORGEEKS, Pattern to search: FOR");
-    checkForSubString("FOR");
+    getLongestRepeatedSubstring();
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
 
-    strcpy(text, "AABAACAADAABAAABAA$");
+    strcpy(text, "AAAAAAAAAA$");
     buildSuffixTree();
-    printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AABA");
-    checkForSubString("AABA");
-    printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AA");
-    checkForSubString("AA");
-    printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AAE");
-    checkForSubString("AAE");
+    getLongestRepeatedSubstring();
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
 
-    strcpy(text, "AAAAAAAAA$");
+    strcpy(text, "ABCDEFG$");
     buildSuffixTree();
-    printf("\n\nText: AAAAAAAAA, Pattern to search: AAAA");
-    checkForSubString("AAAA");
-    printf("\n\nText: AAAAAAAAA, Pattern to search: AA");
-    checkForSubString("AA");
-    printf("\n\nText: AAAAAAAAA, Pattern to search: A");
-    checkForSubString("A");
-    printf("\n\nText: AAAAAAAAA, Pattern to search: AB");
-    checkForSubString("AB");
+    getLongestRepeatedSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    strcpy(text, "ABABABA$");
+    buildSuffixTree();
+    getLongestRepeatedSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    strcpy(text, "ATCGATCGA$");
+    buildSuffixTree();
+    getLongestRepeatedSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    strcpy(text, "banana$");
+    buildSuffixTree();
+    getLongestRepeatedSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    strcpy(text, "abcpqrabpqpq$");
+    buildSuffixTree();
+    getLongestRepeatedSubstring();
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    strcpy(text, "pqrpqpqabab$");
+    buildSuffixTree();
+    getLongestRepeatedSubstring();
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
 
