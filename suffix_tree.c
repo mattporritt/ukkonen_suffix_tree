@@ -1,4 +1,5 @@
-// A C program for substring check using Ukkonen's Suffix Tree Construction
+// A C program to implement Ukkonen's Suffix Tree Construction
+// And find all locations of a pattern in string
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -326,6 +327,34 @@ int traverseEdge(char *str, int idx, int start, int end)
     return 0;  // more characters yet to match
 }
 
+int doTraversalToCountLeaf(Node *n)
+{
+    if(n == NULL)
+        return 0;
+    if(n->suffixIndex > -1)
+    {
+        printf("\nFound at position: %d", n->suffixIndex);
+        return 1;
+    }
+    int count = 0;
+    int i = 0;
+    for (i = 0; i < MAX_CHAR; i++)
+    {
+        if(n->children[i] != NULL)
+        {
+            count += doTraversalToCountLeaf(n->children[i]);
+        }
+    }
+    return count;
+}
+
+int countLeaf(Node *n)
+{
+    if(n == NULL)
+        return 0;
+    return doTraversalToCountLeaf(n);
+}
+
 int doTraversal(Node *n, char* str, int idx)
 {
     if(n == NULL)
@@ -338,8 +367,17 @@ int doTraversal(Node *n, char* str, int idx)
     if(n->start != -1)
     {
         res = traverseEdge(str, idx, n->start, *(n->end));
-        if(res != 0)
-            return res;  // match (res = 1) or no match (res = -1)
+        if(res == -1)  //no match
+            return -1;
+        if(res == 1) //match
+        {
+            if(n->suffixIndex > -1)
+                printf("\nsubstring count: 1 and position: %d",
+                               n->suffixIndex);
+            else
+                printf("\nsubstring count: %d", countLeaf(n));
+            return 1;
+        }
     }
     //Get the character index to search
     idx = idx + edgeLength(n);
@@ -355,28 +393,46 @@ void checkForSubString(char* str)
 {
     int res = doTraversal(root, str, 0);
     if(res == 1)
-        printf("Pattern <%s> is a Substring\n", str);
+        printf("\nPattern <%s> is a Substring\n", str);
     else
-        printf("Pattern <%s> is NOT a Substring\n", str);
+        printf("\nPattern <%s> is NOT a Substring\n", str);
 }
 
 // driver program to test above functions
 int main(int argc, char *argv[])
 {
-    strcpy(text, "THIS IS A TEST TEXT$");
+    strcpy(text, "GEEKSFORGEEKS$");
     buildSuffixTree();
+    printf("Text: GEEKSFORGEEKS, Pattern to search: GEEKS");
+    checkForSubString("GEEKS");
+    printf("\n\nText: GEEKSFORGEEKS, Pattern to search: GEEK1");
+    checkForSubString("GEEK1");
+    printf("\n\nText: GEEKSFORGEEKS, Pattern to search: FOR");
+    checkForSubString("FOR");
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
 
-    checkForSubString("TEST");
+    strcpy(text, "AABAACAADAABAAABAA$");
+    buildSuffixTree();
+    printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AABA");
+    checkForSubString("AABA");
+    printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AA");
+    checkForSubString("AA");
+    printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AAE");
+    checkForSubString("AAE");
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    strcpy(text, "AAAAAAAAA$");
+    buildSuffixTree();
+    printf("\n\nText: AAAAAAAAA, Pattern to search: AAAA");
+    checkForSubString("AAAA");
+    printf("\n\nText: AAAAAAAAA, Pattern to search: AA");
+    checkForSubString("AA");
+    printf("\n\nText: AAAAAAAAA, Pattern to search: A");
     checkForSubString("A");
-    checkForSubString(" ");
-    checkForSubString("IS A");
-    checkForSubString(" IS A ");
-    checkForSubString("TEST1");
-    checkForSubString("THIS IS GOOD");
-    checkForSubString("TES");
-    checkForSubString("TESA");
-    checkForSubString("ISB");
-
+    printf("\n\nText: AAAAAAAAA, Pattern to search: AB");
+    checkForSubString("AB");
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
 
