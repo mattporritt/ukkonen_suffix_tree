@@ -1,4 +1,4 @@
-// A C program to implement Ukkonen's Suffix Tree Construction
+// A C program for substring check using Ukkonen's Suffix Tree Construction
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -76,6 +76,8 @@ Node *newNode(int start, int *end)
 }
 
 int edgeLength(Node *n) {
+    if(n == root)
+        return 0;
     return *(n->end) - (n->start) + 1;
 }
 
@@ -244,7 +246,8 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     if (n->start != -1) //A non-root node
     {
         //Print the label on edge from parent to current node
-        print(n->start, *(n->end));
+        //Uncomment below line to print suffix tree
+       // print(n->start, *(n->end));
     }
     int leaf = 1;
     int i;
@@ -252,8 +255,9 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     {
         if (n->children[i] != NULL)
         {
-            if (leaf == 1 && n->start != -1)
-                printf(" [%d]\n", n->suffixIndex);
+            //Uncomment below two lines to print suffix index
+           // if (leaf == 1 && n->start != -1)
+             //   printf(" [%d]\n", n->suffixIndex);
 
             //Current node is not a leaf as it has outgoing
             //edges from it.
@@ -265,7 +269,8 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     if (leaf == 1)
     {
         n->suffixIndex = size - labelHeight;
-        printf(" [%d]\n", n->suffixIndex);
+        //Uncomment below line to print suffix index
+        //printf(" [%d]\n", n->suffixIndex);
     }
 }
 
@@ -305,21 +310,75 @@ void buildSuffixTree()
         extendSuffixTree(i);
     int labelHeight = 0;
     setSuffixIndexByDFS(root, labelHeight);
+}
 
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
+int traverseEdge(char *str, int idx, int start, int end)
+{
+    int k = 0;
+    //Traverse the edge with character by character matching
+    for(k=start; k<=end && str[idx] != '\0'; k++, idx++)
+    {
+        if(text[k] != str[idx])
+            return -1;  // mo match
+    }
+    if(str[idx] == '\0')
+        return 1;  // match
+    return 0;  // more characters yet to match
+}
+
+int doTraversal(Node *n, char* str, int idx)
+{
+    if(n == NULL)
+    {
+        return -1; // no match
+    }
+    int res = -1;
+    //If node n is not root node, then traverse edge
+    //from node n's parent to node n.
+    if(n->start != -1)
+    {
+        res = traverseEdge(str, idx, n->start, *(n->end));
+        if(res != 0)
+            return res;  // match (res = 1) or no match (res = -1)
+    }
+    //Get the character index to search
+    idx = idx + edgeLength(n);
+    //If there is an edge from node n going out
+    //with current character str[idx], travrse that edge
+    if(n->children[str[idx]] != NULL)
+        return doTraversal(n->children[str[idx]], str, idx);
+    else
+        return -1;  // no match
+}
+
+void checkForSubString(char* str)
+{
+    int res = doTraversal(root, str, 0);
+    if(res == 1)
+        printf("Pattern <%s> is a Substring\n", str);
+    else
+        printf("Pattern <%s> is NOT a Substring\n", str);
 }
 
 // driver program to test above functions
 int main(int argc, char *argv[])
 {
-//  strcpy(text, "abc"); buildSuffixTree();
-//  strcpy(text, "xabxac#");    buildSuffixTree();
-//  strcpy(text, "xabxa");  buildSuffixTree();
-//  strcpy(text, "xabxa$"); buildSuffixTree();
-    strcpy(text, "abcabxabcd$"); buildSuffixTree();
-//  strcpy(text, "geeksforgeeks$"); buildSuffixTree();
-//  strcpy(text, "THIS IS A TEST TEXT$"); buildSuffixTree();
-//  strcpy(text, "AABAACAADAABAAABAA$"); buildSuffixTree();
+    strcpy(text, "THIS IS A TEST TEXT$");
+    buildSuffixTree();
+
+    checkForSubString("TEST");
+    checkForSubString("A");
+    checkForSubString(" ");
+    checkForSubString("IS A");
+    checkForSubString(" IS A ");
+    checkForSubString("TEST1");
+    checkForSubString("THIS IS GOOD");
+    checkForSubString("TES");
+    checkForSubString("TESA");
+    checkForSubString("ISB");
+
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
     return 0;
 }
