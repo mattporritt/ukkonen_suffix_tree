@@ -330,7 +330,7 @@ int* substringStartIndex)
 {
     if(n == NULL)
     {
-        return;
+        return 0;
     }
     int i=0;
     int ret = -1;
@@ -388,12 +388,19 @@ void getLongestCommonSubstring()
 // driver program to test above functions
 int main(int argc, char *argv[])
 {
-    size1 = 7;
-    printf("Longest Common Substring in xabxac and abcabxabcd is: ");
-    strcpy(text, "xabxac#abcabxabcd$"); buildSuffixTree();
-    getLongestCommonSubstring();
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
+        size1 = 21;
+        printf("Longest Common Substring in xabxac and abacbxabcd is: ");
+        strcpy(text, "orangeisatypeoffruit#fruitsomestuggoeshereorange$"); buildSuffixTree();
+        getLongestCommonSubstring();
+        //Free the dynamically allocated memory
+        freeSuffixTreeByPostOrder(root);
+
+        size1 = 7;
+        printf("Longest Common Substring in xabxac and abacbxabcd is: ");
+        strcpy(text, "xabxac#abacbxabcd$"); buildSuffixTree();
+        getLongestCommonSubstring();
+        //Free the dynamically allocated memory
+        freeSuffixTreeByPostOrder(root);
 
     size1 = 10;
     printf("Longest Common Substring in xabxaabxa and babxba is: ");
