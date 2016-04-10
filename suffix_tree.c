@@ -29,7 +29,8 @@ struct SuffixTreeNode {
 
 typedef struct SuffixTreeNode Node;
 
-char text[100]; //Input string
+// TODO: set this dynamically based on the leng
+unsigned char text[100]; //Input string
 Node *root = NULL; //Pointer to root node
 
 /*lastNewNode will point to newly created internal node,
@@ -55,6 +56,13 @@ int *rootEnd = NULL;
 int *splitEnd = NULL;
 int size = -1; //Length of input string
 int size1 = 0; //Size of 1st string
+
+struct substring {
+        int stringstart;
+        int stringend;
+};
+
+struct substring subtrings[MAX_CHAR];
 
 Node *newNode(int start, int *end)
 {
@@ -309,7 +317,7 @@ suffixIndex. suffixIndex for leaf edges will be >= 0 and
 for non-leaf edges will be -1*/
 void buildSuffixTree()
 {
-    size = strlen(text);
+    size = strlen((const char*) text);
     int i;
     rootEnd = (int*) malloc(sizeof(int));
     *rootEnd = - 1;
@@ -352,11 +360,16 @@ int* substringStartIndex)
                 {
                     n->suffixIndex = -4;//Mark node as XY
                     //Keep track of deepest node
-                    if(*maxHeight < labelHeight)
+                    if(labelHeight > 2)
                     {
-                        *maxHeight = labelHeight;
-                        *substringStartIndex = *(n->end) -
-                            labelHeight + 1;
+//                        *maxHeight = labelHeight;
+//                        *substringStartIndex = *(n->end) -
+//                            labelHeight + 1;
+                            if (subtrings[i].stringend == 0 || n->start < subtrings[i].stringstart){
+                                    subtrings[i].stringstart = n->start;
+                                    subtrings[i].stringend = *(n->end);
+                            }
+
                     }
                 }
             }
@@ -373,71 +386,27 @@ void getLongestCommonSubstring()
 {
     int maxHeight = 0;
     int substringStartIndex = 0;
+    int i = 0;
     doTraversal(root, 0, &maxHeight, &substringStartIndex);
 
-    int k;
-    for (k=0; k<maxHeight; k++)
-        printf("%c", text[k + substringStartIndex]);
-    if(k == 0)
-        printf("No common substring");
-    else
-        printf(", of length: %d",maxHeight);
-    printf("\n");
+    for (i = 0; i < MAX_CHAR; i++)
+            {
+            if(subtrings[i].stringend != 0){
+                    printf("string start: %d \n",subtrings[i].stringstart);
+                    printf("string end: %d \n",subtrings[i].stringend);
+            }
+            }
 }
 
 // driver program to test above functions
 int main(int argc, char *argv[])
 {
         size1 = 21;
-        printf("Longest Common Substring in xabxac and abacbxabcd is: ");
-        strcpy(text, "orangeisatypeoffruit#fruitsomestuggoeshereorange$"); buildSuffixTree();
+        printf("All Common Substrings in orangeisatypeoffruit and fruitsomestugfruitgoeshereorange are: \n");
+        strcpy((char*)text, "orangeisatypeoffruit#fruitsomestugfruitgoeshereorange$"); buildSuffixTree();
         getLongestCommonSubstring();
         //Free the dynamically allocated memory
         freeSuffixTreeByPostOrder(root);
-
-        size1 = 7;
-        printf("Longest Common Substring in xabxac and abacbxabcd is: ");
-        strcpy(text, "xabxac#abacbxabcd$"); buildSuffixTree();
-        getLongestCommonSubstring();
-        //Free the dynamically allocated memory
-        freeSuffixTreeByPostOrder(root);
-
-    size1 = 10;
-    printf("Longest Common Substring in xabxaabxa and babxba is: ");
-    strcpy(text, "xabxaabxa#babxba$"); buildSuffixTree();
-    getLongestCommonSubstring();
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-
-    size1 = 14;
-    printf("Longest Common Substring in GeeksforGeeks and GeeksQuiz is: ");
-    strcpy(text, "GeeksforGeeks#GeeksQuiz$"); buildSuffixTree();
-    getLongestCommonSubstring();
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-
-    size1 = 26;
-    printf("Longest Common Substring in OldSite:GeeksforGeeks.org");
-    printf(" and NewSite:GeeksQuiz.com is: ");
-    strcpy(text, "OldSite:GeeksforGeeks.org#NewSite:GeeksQuiz.com$");
-    buildSuffixTree();
-    getLongestCommonSubstring();
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-
-    size1 = 6;
-    printf("Longest Common Substring in abcde and fghie is: ");
-    strcpy(text, "abcde#fghie$"); buildSuffixTree();
-    getLongestCommonSubstring();
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
-
-    size1 = 6;
-    printf("Longest Common Substring in pqrst and uvwxyz is: ");
-    strcpy(text, "pqrst#uvwxyz$"); buildSuffixTree();
-    getLongestCommonSubstring();
-    //Free the dynamically allocated memory
-    freeSuffixTreeByPostOrder(root);
 
     return 0;
 }
