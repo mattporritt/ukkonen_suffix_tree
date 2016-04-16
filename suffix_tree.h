@@ -4,6 +4,7 @@
  */
 
 #define MAX_CHAR 256
+extern unsigned char *text; //Input string
 
 struct SuffixTreeNode {
     struct SuffixTreeNode *children[MAX_CHAR];
@@ -27,6 +28,18 @@ struct SuffixTreeNode {
 };
 
 typedef struct SuffixTreeNode Node;
+
+extern Node *root; //Pointer to root node
+
+/*lastNewNode will point to newly created internal node,
+  waiting for it's suffix link to be set, which might get
+  a new suffix link (other than root) in next extension of
+  same phase. lastNewNode will be set to NULL when last
+  newly created internal node (if there is any) got it's
+  suffix link reset to new internal node created in next
+  extension of same phase. */
+extern Node *lastNewNode;
+extern Node *activeNode;
 
 struct substring {
         int stringstart;
@@ -69,3 +82,6 @@ int doTraversal(Node *n, int labelHeight, int* maxHeight,
 int* substringStartIndex);
 
 void getLongestCommonSubstring();
+
+
+

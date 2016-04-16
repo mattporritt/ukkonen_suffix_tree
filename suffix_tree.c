@@ -6,17 +6,8 @@
 #include <stdlib.h>
 #include "suffix_tree.h"
 
-// TODO: set this dynamically based on the leng
-unsigned char text[100]; //Input string
+unsigned char *text = NULL; //Input string
 Node *root = NULL; //Pointer to root node
-
-/*lastNewNode will point to newly created internal node,
-  waiting for it's suffix link to be set, which might get
-  a new suffix link (other than root) in next extension of
-  same phase. lastNewNode will be set to NULL when last
-  newly created internal node (if there is any) got it's
-  suffix link reset to new internal node created in next
-  extension of same phase. */
 Node *lastNewNode = NULL;
 Node *activeNode = NULL;
 
@@ -366,17 +357,4 @@ void getLongestCommonSubstring()
                     printf("string end: %d \n",subtrings[i].stringend);
             }
             }
-}
-
-// driver program to test above functions
-int main(int argc, char *argv[])
-{
-        size1 = 21;
-        printf("All Common Substrings in orangeisatypeoffruit and fruitsomestugfruitgoeshereorange are: \n");
-        strcpy((char*)text, "orangeisatypeoffruit#fruitsomestugfruitgoeshereorange$"); buildSuffixTree();
-        getLongestCommonSubstring();
-        //Free the dynamically allocated memory
-        freeSuffixTreeByPostOrder(root);
-
-    return 0;
 }
