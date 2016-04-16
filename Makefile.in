@@ -1,0 +1,14 @@
+# Makefile: A makefile for the suffix tree
+CC = gcc
+
+all: suffix_tree.c main.c
+	$(CC) -o suffix_tree suffix_tree.c main.c -I.
+
+clean:
+	rm -f suffix_tree *.o
+
+test:
+	@echo "testing test"
+
+print:
+	@echo CC=$(CC) CFLAGS=$(CFLAGS)
