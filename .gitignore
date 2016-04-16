@@ -36,3 +36,11 @@
 .project
 /Debug/
 .settings/
+
+# Auto Tools
+autoscan.log
+autom4te.cache/
+configure.ac
+Makefile
+config.log
+config.status
