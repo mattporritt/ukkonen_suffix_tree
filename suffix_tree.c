@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "suffix_tree.h"
 
+unsigned char print_enabled = 0;
 unsigned char *text = NULL; //Input string
 Node *root = NULL; //Pointer to root node
 Node *lastNewNode = NULL;
@@ -219,9 +220,10 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
 
     if (n->start != -1) //A non-root node
     {
-        //Print the label on edge from parent to current node
-        //Uncomment below line to print suffix tree
-        //print(n->start, *(n->end));
+            if (print_enabled){
+                    //Print the label on edge from parent to current node
+                    print(n->start, *(n->end));
+            }
     }
     int leaf = 1;
     int i;
@@ -229,9 +231,12 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     {
         if (n->children[i] != NULL)
         {
-            //Uncomment below two lines to print suffix index
-         //   if (leaf == 1 && n->start != -1)
-           //     printf(" [%d]\n", n->suffixIndex);
+                if (print_enabled){
+                        //print suffix index
+                        if (leaf == 1 && n->start != -1){
+                                printf(" [%d]\n", n->suffixIndex);
+                        }
+                }
 
             //Current node is not a leaf as it has outgoing
             //edges from it.
@@ -251,8 +256,10 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
             }
         }
         n->suffixIndex = size - labelHeight;
-        //Uncomment below line to print suffix index
-       // printf(" [%d]\n", n->suffixIndex);
+        if (print_enabled){
+                //print suffix index
+                printf(" [%d]\n", n->suffixIndex);
+        }
     }
 }
 

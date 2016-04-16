@@ -7,7 +7,7 @@
 #include "suffix_tree.h"
 int main(int argc, char *argv[])
 {
-
+        print_enabled = 0;
         unsigned char input[] = "abc"; //Input string
         text = (unsigned char*)input;
         buildSuffixTree();

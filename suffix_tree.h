@@ -5,6 +5,7 @@
 
 #define MAX_CHAR 256
 extern unsigned char *text; //Input string
+unsigned char print_enabled;
 
 struct SuffixTreeNode {
     struct SuffixTreeNode *children[MAX_CHAR];
