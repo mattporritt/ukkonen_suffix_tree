@@ -44,3 +44,6 @@ configure.ac
 Makefile
 config.log
 config.status
+
+# Executables
+suffix_tree
