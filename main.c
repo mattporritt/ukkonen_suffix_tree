@@ -1,13 +1,16 @@
 /*
  * Command line interface for suffix tree functions
  */
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <argp.h>
 #include "suffix_tree.h"
 
-// Process command line options and arguements
+void self_test();
+
+// Process command line options and arguments
 static int
 parse_opt (int key, char *arg, struct argp_state *state)
 {
@@ -16,6 +19,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
         switch (key)
         {
                 case 't':
+                {
+                        // run the self test suite
+                        self_test();
+                        exit(0);
+                }
+                case 'p':
                 {
                         print_enabled = 1;
                         break;
@@ -43,11 +52,19 @@ parse_opt (int key, char *arg, struct argp_state *state)
         return 0;
 }
 
+/**
+ * run self tests
+ */
+void self_test(){
+        printf("Running Self Tests... \n");
+}
+
 int main(int argc, char **argv)
 {
         struct argp_option options[] =
         {
-                { "tree", 't', 0, 0, "Print the tree for the supplied string"},
+                { "print", 'p', 0, 0, "Print the tree for the supplied string"},
+                { "test", 't', 0, 0, "Run self tests"},
                 { 0 }
         };
 

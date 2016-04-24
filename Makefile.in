@@ -8,7 +8,7 @@ clean:
 	rm -f suffix_tree *.o
 
 test:
-	@echo "testing test"
+	./suffix_tree -t
 
 print:
 	@echo CC=$(CC) CFLAGS=$(CFLAGS)
