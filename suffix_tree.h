@@ -5,6 +5,7 @@
 
 #define MAX_CHAR 256
 extern unsigned char *text; //Input string
+extern char *tree_string; //String to hold text version of tree
 unsigned char print_enabled;
 
 struct SuffixTreeNode {
@@ -83,6 +84,12 @@ int doTraversal(Node *n, int labelHeight, int* maxHeight,
 int* substringStartIndex);
 
 void getLongestCommonSubstring();
+
+/*
+ * builds string that contains text version of suffix tree
+ * for displaying on console
+ */
+void buildTreeString(char *new_text);
 
 
 

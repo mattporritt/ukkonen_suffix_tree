@@ -8,11 +8,12 @@
 
 unsigned char print_enabled = 0;
 unsigned char *text = NULL; //Input string
+char *tree_string = NULL; //String to hold text version of tree
 Node *root = NULL; //Pointer to root node
 Node *lastNewNode = NULL;
 Node *activeNode = NULL;
 
-/*activeEdge is represeted as input string character
+/*activeEdge is represented as input string character
   index (not the character itself)*/
 int activeEdge = -1;
 int activeLength = 0;
@@ -205,10 +206,15 @@ void extendSuffixTree(int pos)
 void print(int i, int j)
 {
     int k;
-    for (k=i; k<=j && text[k] != '#'; k++)
-        printf("%c", text[k]);
-    if(k<=j)
-        printf("#");
+    char *printer;
+    for (k=i; k<=j && text[k] != '#'; k++){
+            asprintf(&printer, "%c", text[k]);
+            buildTreeString(printer);
+            free(printer);
+    }
+    if(k<=j){
+        buildTreeString("#");
+    }
 }
 
 //Print the suffix tree as well along with setting suffix index
@@ -227,6 +233,7 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     }
     int leaf = 1;
     int i;
+    char *printer;
     for (i = 0; i < MAX_CHAR; i++)
     {
         if (n->children[i] != NULL)
@@ -234,7 +241,9 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
                 if (print_enabled){
                         //print suffix index
                         if (leaf == 1 && n->start != -1){
-                                printf(" [%d]\n", n->suffixIndex);
+                                asprintf(&printer, " [%d]\n", n->suffixIndex);
+                                buildTreeString(printer);
+                                free(printer);
                         }
                 }
 
@@ -258,7 +267,9 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
         n->suffixIndex = size - labelHeight;
         if (print_enabled){
                 //print suffix index
-                printf(" [%d]\n", n->suffixIndex);
+                asprintf(&printer, " [%d]\n", n->suffixIndex);
+                buildTreeString(printer);
+                free(printer);
         }
     }
 }
@@ -364,4 +375,15 @@ void getLongestCommonSubstring()
                     printf("string end: %d \n",subtrings[i].stringend);
             }
             }
+}
+
+
+void buildTreeString(char *new_text){
+        size_t new_len = strlen(new_text) + 1; /* + 1 for terminating NULL */
+        if (tree_string == NULL){
+                tree_string = (char*) malloc(new_len);
+        }
+        size_t current_len = strlen(tree_string);
+        tree_string = (char *) realloc(tree_string, (new_len + current_len));
+        strncat(tree_string, new_text, new_len);
 }
