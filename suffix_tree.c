@@ -295,8 +295,14 @@ void freeSuffixTreeByPostOrder(Node *n)
 /*Build the suffix tree and print the edge labels along with
 suffixIndex. suffixIndex for leaf edges will be >= 0 and
 for non-leaf edges will be -1*/
-void buildSuffixTree()
-{
+int buildSuffixTree(unsigned char *string1, unsigned char *string2, unsigned char print_tree){
+        //First check if we have at least one valid string
+        if(!string1){
+                return 1;
+        }
+        text = string1;
+        print_enabled = print_tree;
+
     size = strlen((const char*) text);
     int i;
     rootEnd = (int*) malloc(sizeof(int));
@@ -311,6 +317,8 @@ void buildSuffixTree()
         extendSuffixTree(i);
     int labelHeight = 0;
     setSuffixIndexByDFS(root, labelHeight);
+
+    return 0;
 }
 
 int doTraversal(Node *n, int labelHeight, int* maxHeight,

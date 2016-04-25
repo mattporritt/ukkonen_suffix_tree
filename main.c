@@ -9,6 +9,9 @@
 #include "suffix_tree.h"
 
 void self_test();
+unsigned char *input_text; //Input string 1 (for suffix tree)
+unsigned char *input_text2; //Input string 2 (for generalized suffix tree)
+int print_tree = 0;
 
 // Process command line options and arguments
 static int
@@ -25,17 +28,17 @@ parse_opt (int key, char *arg, struct argp_state *state)
                 }
                 case 'p': //Print the generated tree
                 {
-                        print_enabled = 1;
+                        print_tree = 1;
                         break;
                 }
                 case ARGP_KEY_ARG: //Process the command line arguments
                 {
                         (*arg_count)--;
                         if (*arg_count == 1){
-                                text = (unsigned char*)arg;
+                                input_text = (unsigned char*)arg;
                         }
                         else if (*arg_count == 0){
-                                text2 = (unsigned char*)arg;
+                                input_text2 = (unsigned char*)arg;
                         }
 
                 }
@@ -51,9 +54,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
                         }
                         else {
                                 // Construct the tree and process based on supplied options
-                                buildSuffixTree();
+                                buildSuffixTree(input_text, input_text2, print_tree);
                                 freeSuffixTreeByPostOrder(root);
-                                if (print_enabled){
+                                if (print_tree){
                                         printf(tree_string, 's');
                                 }
                         }
@@ -70,12 +73,10 @@ void self_test(){
         printf("Running Self Tests... \n");
 
         printf("Build suffix tree test: \n");
-        print_enabled = 1;
         unsigned char input[] = "abc"; //Build Suffix tree for this string
         char *tree_output = "abc [0]\nbc [1]\nc [2]\n"; //Expected output
-        text = (unsigned char*)input;
-        printf("Building suffix tree for string: %s \n", text);
-        buildSuffixTree();
+        printf("Building suffix tree for string: %s \n", input);
+        buildSuffixTree(input, NULL, 1);
         freeSuffixTreeByPostOrder(root);
         printf(tree_string, 's');
         int compare_result = strcmp(tree_string, tree_output);
@@ -99,12 +100,6 @@ int main(int argc, char **argv)
         struct argp argp = { options, parse_opt, "STRING [STRING]" };
         return argp_parse (&argp, argc, argv, 0, 0, &arg_count);
 
-//        print_enabled = 0;
-//        unsigned char input[] = "abc"; //Input string
-//        text = (unsigned char*)input;
-//        buildSuffixTree();
-//        freeSuffixTreeByPostOrder(root);
-//        printf("\n");
 //        strcpy(text, "abcabxabcd$"); buildSuffixTree(); freeSuffixTreeByPostOrder(root);
 //        size1 = 21;
 //        printf("All Common Substrings in orangeisatypeoffruit and fruitsomestugfruitgoeshereorange are: \n");

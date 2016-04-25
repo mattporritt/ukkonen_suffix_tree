@@ -4,8 +4,8 @@
  */
 
 #define MAX_CHAR 256
-extern unsigned char *text; //Input string 1 (for suffix tree)
-extern unsigned char *text2; //Input string 2 (for generalized suffix tree)
+unsigned char *text; //Input string 1 (for suffix tree)
+unsigned char *text2; //Input string 2 (for generalized suffix tree)
 extern char *tree_string; //String to hold text version of tree
 unsigned char print_enabled;
 
@@ -79,7 +79,7 @@ void freeSuffixTreeByPostOrder(Node *n);
 /*Build the suffix tree and print the edge labels along with
 suffixIndex. suffixIndex for leaf edges will be >= 0 and
 for non-leaf edges will be -1*/
-void buildSuffixTree();
+int buildSuffixTree(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
 
 int doTraversal(Node *n, int labelHeight, int* maxHeight,
 int* substringStartIndex);
