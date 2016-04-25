@@ -4,7 +4,8 @@
  */
 
 #define MAX_CHAR 256
-extern unsigned char *text; //Input string
+extern unsigned char *text; //Input string 1 (for suffix tree)
+extern unsigned char *text2; //Input string 2 (for generalized suffix tree)
 extern char *tree_string; //String to hold text version of tree
 unsigned char print_enabled;
 

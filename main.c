@@ -18,33 +18,44 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
         switch (key)
         {
-                case 't':
+                case 't': //Run the self test suite
                 {
-                        // run the self test suite
                         self_test();
                         exit(0);
                 }
-                case 'p':
+                case 'p': //Print the generated tree
                 {
                         print_enabled = 1;
                         break;
                 }
-                case ARGP_KEY_ARG:
+                case ARGP_KEY_ARG: //Process the command line arguments
                 {
                         (*arg_count)--;
-                        //unsigned char input[] = arg; //Input string
-                        text = (unsigned char*)arg;
-                        buildSuffixTree();
+                        if (*arg_count == 1){
+                                text = (unsigned char*)arg;
+                        }
+                        else if (*arg_count == 0){
+                                text2 = (unsigned char*)arg;
+                        }
+
                 }
                 break;
                 case ARGP_KEY_END:
                 {
                         printf ("\n");
-                        if (*arg_count >= 1){
+                        if (*arg_count >= 2){
                                 argp_failure (state, 1, 0, "too few arguments");
                         }
                         else if (*arg_count < 0){
                                 argp_failure (state, 1, 0, "too many arguments");
+                        }
+                        else {
+                                // Construct the tree and process based on supplied options
+                                buildSuffixTree();
+                                freeSuffixTreeByPostOrder(root);
+                                if (print_enabled){
+                                        printf(tree_string, 's');
+                                }
                         }
                 }
                 break;
@@ -84,8 +95,8 @@ int main(int argc, char **argv)
                 { 0 }
         };
 
-        int arg_count = 1;
-        struct argp argp = { options, parse_opt, "STRING" };
+        int arg_count = 2;
+        struct argp argp = { options, parse_opt, "STRING [STRING]" };
         return argp_parse (&argp, argc, argv, 0, 0, &arg_count);
 
 //        print_enabled = 0;

@@ -7,7 +7,8 @@
 #include "suffix_tree.h"
 
 unsigned char print_enabled = 0;
-unsigned char *text = NULL; //Input string
+unsigned char *text = NULL; //Input string 1 (for suffix tree)
+unsigned char *text2 = NULL; //Input string 2 (for generalized suffix tree)
 char *tree_string = NULL; //String to hold text version of tree
 Node *root = NULL; //Pointer to root node
 Node *lastNewNode = NULL;
