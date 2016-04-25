@@ -57,14 +57,21 @@ parse_opt (int key, char *arg, struct argp_state *state)
  */
 void self_test(){
         printf("Running Self Tests... \n");
+
         printf("Build suffix tree test: \n");
         print_enabled = 1;
-        unsigned char input[] = "abc"; //Input string
+        unsigned char input[] = "abc"; //Build Suffix tree for this string
+        char *tree_output = "abc [0]\nbc [1]\nc [2]\n"; //Expected output
         text = (unsigned char*)input;
+        printf("Building suffix tree for string: %s \n", text);
         buildSuffixTree();
         freeSuffixTreeByPostOrder(root);
-        //printf("All common substrings test: \n");
         printf(tree_string, 's');
+        int compare_result = strcmp(tree_string, tree_output);
+        assert(compare_result == 0);
+        printf("Suffix tree build test: Passed\n");
+
+        //printf("All common substrings test: \n");
         printf("done");
 }
 
