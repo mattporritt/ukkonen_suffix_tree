@@ -25,8 +25,8 @@ int remainingSuffixCount = 0;
 int leafEnd = -1;
 int *rootEnd = NULL;
 int *splitEnd = NULL;
-int size = -1; //Length of input string
-int size1 = 0; //Size of 1st string
+int totalStringLength = -1; //Length of input string
+int string1Length = 0; //totalStringLength of 1st string
 
 Node *newNode(int start, int *end)
 {
@@ -208,13 +208,13 @@ void print(int i, int j)
 {
     int k;
     char *printer;
-    for (k=i; k<=j && text[k] != '#'; k++){
+    for (k=i; k<=j && text[k] != '+'; k++){
             asprintf(&printer, "%c", text[k]);
             buildTreeString(printer);
             free(printer);
     }
     if(k<=j){
-        buildTreeString("#");
+        buildTreeString("+");
     }
 }
 
@@ -259,13 +259,13 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     {
         for(i= n->start; i<= *(n->end); i++)
         {
-            if(text[i] == '#')
+            if(text[i] == '+')
             {
                 n->end = (int*) malloc(sizeof(int));
                 *(n->end) = i;
             }
         }
-        n->suffixIndex = size - labelHeight;
+        n->suffixIndex = totalStringLength - labelHeight;
         if (print_enabled){
                 //print suffix index
                 asprintf(&printer, " [%d]\n", n->suffixIndex);
@@ -300,10 +300,20 @@ int buildSuffixTree(unsigned char *string1, unsigned char *string2, unsigned cha
         if(!string1){
                 return 1;
         }
-        text = string1;
+        // Check if we are printing suffix tree
         print_enabled = print_tree;
 
-    size = strlen((const char*) text);
+        //Check if we have two strings
+        //Two strings mean we are building a generalized suffix tree
+        if(string2){
+                asprintf(&text, "%s%c%s%c", string1, 43,  string2, 36);
+                string1Length = strlen((const char*) string1);
+        }
+        else{
+                asprintf(&text, "%s%c", string1, 36);
+        }
+
+        totalStringLength = strlen((const char*) text);
     int i;
     rootEnd = (int*) malloc(sizeof(int));
     *rootEnd = - 1;
@@ -313,7 +323,7 @@ int buildSuffixTree(unsigned char *string1, unsigned char *string2, unsigned cha
     root = newNode(-1, rootEnd);
 
     activeNode = root; //First activeNode will be root
-    for (i=0; i<size; i++)
+    for (i=0; i<totalStringLength; i++)
         extendSuffixTree(i);
     int labelHeight = 0;
     setSuffixIndexByDFS(root, labelHeight);
@@ -363,9 +373,9 @@ int* substringStartIndex)
             }
         }
     }
-    else if(n->suffixIndex > -1 && n->suffixIndex < size1)//suffix of X
+    else if(n->suffixIndex > -1 && n->suffixIndex < string1Length)//suffix of X
         return -2;//Mark node as X
-    else if(n->suffixIndex >= size1)//suffix of Y
+    else if(n->suffixIndex >= string1Length)//suffix of Y
         return -3;//Mark node as Y
     return n->suffixIndex;
 }
@@ -395,4 +405,8 @@ void buildTreeString(char *new_text){
         size_t current_len = strlen(tree_string);
         tree_string = (char *) realloc(tree_string, (new_len + current_len));
         strncat(tree_string, new_text, new_len);
+}
+
+void getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree){
+
 }

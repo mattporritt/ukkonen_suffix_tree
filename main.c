@@ -73,17 +73,46 @@ void self_test(){
         printf("Running Self Tests... \n");
 
         printf("Build suffix tree test: \n");
-        unsigned char input[] = "abc"; //Build Suffix tree for this string
-        char *tree_output = "abc [0]\nbc [1]\nc [2]\n"; //Expected output
-        printf("Building suffix tree for string: %s \n", input);
-        buildSuffixTree(input, NULL, 1);
+        char *tree_output =     "$ [3]\n"
+                                "abc$ [0]\n"
+                                "bc$ [1]\n"
+                                "c$ [2]\n"; //Expected output
+        printf("Building suffix tree for string: abc \n");
+        buildSuffixTree((unsigned char *)"abc", NULL, 1); //Build Suffix tree for this string
         freeSuffixTreeByPostOrder(root);
         printf(tree_string, 's');
         int compare_result = strcmp(tree_string, tree_output);
         assert(compare_result == 0);
+        memset(tree_string,0,strlen(tree_string)); //clear string from previous test
+        char *tree_output2 =    "$ [10]\n"
+                                "ab [-1]\n"
+                                "c [-1]\n"
+                                "abxabcd$ [0]\n"
+                                "d$ [6]\n"
+                                "xabcd$ [3]\n"
+                                "b [-1]\n"
+                                "c [-1]\n"
+                                "abxabcd$ [1]\n"
+                                "d$ [7]\n"
+                                "xabcd$ [4]\n"
+                                "c [-1]\n"
+                                "abxabcd$ [2]\n"
+                                "d$ [8]\n"
+                                "d$ [9]\n"
+                                "xabcd$ [5]\n"; //Expected output
+        printf("Building suffix tree for string: abcabxabcd \n");
+        buildSuffixTree((unsigned char *)"abcabxabcd", NULL, 1); //Build Suffix tree for this string
+        freeSuffixTreeByPostOrder(root);
+        printf(tree_string, 's');
+        int compare_result2 = strcmp(tree_string, tree_output2);
+        assert(compare_result2 == 0);
+
         printf("Suffix tree build test: Passed\n");
 
         //printf("All common substrings test: \n");
+        //printf("Longest Common Substring in xabxac and abcabxabcd is: ");
+        //buildSuffixTree(input, NULL, 1);
+
         printf("done");
 }
 
