@@ -297,7 +297,7 @@ suffixIndex. suffixIndex for leaf edges will be >= 0 and
 for non-leaf edges will be -1*/
 int buildSuffixTree(unsigned char *string1, unsigned char *string2, unsigned char print_tree){
         //First check if we have at least one valid string
-        if(!string1){
+        if(string1 == NULL){
                 return 1;
         }
         // Check if we are printing suffix tree
@@ -305,7 +305,7 @@ int buildSuffixTree(unsigned char *string1, unsigned char *string2, unsigned cha
 
         //Check if we have two strings
         //Two strings mean we are building a generalized suffix tree
-        if(string2){
+        if(string2 != NULL){
                 asprintf(&text, "%s%c%s%c", string1, 43,  string2, 36);
                 string1Length = strlen((const char*) string1);
         }
@@ -358,15 +358,16 @@ int* substringStartIndex)
                 {
                     n->suffixIndex = -4;//Mark node as XY
                     //Keep track of deepest node
-                    if(labelHeight > 2)
+//                    if(labelHeight > 2)
+                    if(*maxHeight < labelHeight)
                     {
-//                        *maxHeight = labelHeight;
-//                        *substringStartIndex = *(n->end) -
-//                            labelHeight + 1;
-                            if (subtrings[i].stringend == 0 || n->start < subtrings[i].stringstart){
-                                    subtrings[i].stringstart = n->start;
-                                    subtrings[i].stringend = *(n->end);
-                            }
+                        *maxHeight = labelHeight;
+                        *substringStartIndex = *(n->end) -
+                            labelHeight + 1;
+//                            if (subtrings[i].stringend == 0 || n->start < subtrings[i].stringstart){
+//                                    subtrings[i].stringstart = n->start;
+//                                    subtrings[i].stringend = *(n->end);
+//                            }
 
                     }
                 }
@@ -380,20 +381,34 @@ int* substringStartIndex)
     return n->suffixIndex;
 }
 
-void getLongestCommonSubstring()
+int getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, unsigned char print_tree)
 {
     int maxHeight = 0;
     int substringStartIndex = 0;
-    int i = 0;
+
+    //First check if we have two strings
+    if((string1 == NULL) || (string2 == NULL)){
+            return 1;
+    }
+    buildSuffixTree(string1, string2, print_tree);
     doTraversal(root, 0, &maxHeight, &substringStartIndex);
 
-    for (i = 0; i < MAX_CHAR; i++)
-            {
-            if(subtrings[i].stringend != 0){
-                    printf("string start: %d \n",subtrings[i].stringstart);
-                    printf("string end: %d \n",subtrings[i].stringend);
-            }
-            }
+    int k;
+    for (k=0; k<maxHeight; k++){
+            printf("%c", text[k + substringStartIndex]);
+    }
+    if(k == 0){
+            printf("No common substring");
+    }
+    else{
+            printf(", of length: %d",maxHeight);
+    }
+    printf("\n");
+
+    //Free the dynamically allocated memory
+    freeSuffixTreeByPostOrder(root);
+
+    return 0;
 }
 
 

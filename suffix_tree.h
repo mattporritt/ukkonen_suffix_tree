@@ -84,8 +84,8 @@ int buildSuffixTree(unsigned char *string1, unsigned char *string2, unsigned cha
 int doTraversal(Node *n, int labelHeight, int* maxHeight,
 int* substringStartIndex);
 
-void getLongestCommonSubstring();
-void getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
+int getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
+int getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
 
 /*
  * builds string that contains text version of suffix tree
