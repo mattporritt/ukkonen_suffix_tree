@@ -210,11 +210,11 @@ void print(int i, int j)
     char *printer;
     for (k=i; k<=j && text[k] != '+'; k++){
             asprintf(&printer, "%c", text[k]);
-            buildTreeString(printer);
+            buildString(&tree_string, printer);
             free(printer);
     }
     if(k<=j){
-        buildTreeString("+");
+        buildString(&tree_string, "+");
     }
 }
 
@@ -243,7 +243,7 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
                         //print suffix index
                         if (leaf == 1 && n->start != -1){
                                 asprintf(&printer, " [%d]\n", n->suffixIndex);
-                                buildTreeString(printer);
+                                buildString(&tree_string, printer);
                                 free(printer);
                         }
                 }
@@ -269,7 +269,7 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
         if (print_enabled){
                 //print suffix index
                 asprintf(&printer, " [%d]\n", n->suffixIndex);
-                buildTreeString(printer);
+                buildString(&tree_string,printer);
                 free(printer);
         }
     }
@@ -412,14 +412,14 @@ int getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, un
 }
 
 
-void buildTreeString(char *new_text){
+void buildString(char** current_text, char *new_text){
         size_t new_len = strlen(new_text) + 1; /* + 1 for terminating NULL */
-        if (tree_string == NULL){
-                tree_string = (char*) malloc(new_len);
+        if (*current_text == NULL){
+                *current_text = (char*) malloc(new_len);
         }
-        size_t current_len = strlen(tree_string);
-        tree_string = (char *) realloc(tree_string, (new_len + current_len));
-        strncat(tree_string, new_text, new_len);
+        size_t current_len = strlen(*current_text);
+        *current_text = (char *) realloc(*current_text, (new_len + current_len));
+        strncat(*current_text, new_text, new_len);
 }
 
 void getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree){

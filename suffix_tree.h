@@ -91,7 +91,7 @@ int getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsig
  * builds string that contains text version of suffix tree
  * for displaying on console
  */
-void buildTreeString(char *new_text);
+void buildString(char** current_text, char *new_text);
 
 
 
