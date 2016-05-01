@@ -227,7 +227,7 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
 
     if (n->start != -1) //A non-root node
     {
-            if (print_enabled){
+            if (print_enabled == 1){
                     //Print the label on edge from parent to current node
                     print(n->start, *(n->end));
             }
@@ -239,7 +239,7 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
     {
         if (n->children[i] != NULL)
         {
-                if (print_enabled){
+                if (print_enabled == 1){
                         //print suffix index
                         if (leaf == 1 && n->start != -1){
                                 asprintf(&printer, " [%d]\n", n->suffixIndex);
@@ -266,7 +266,7 @@ void setSuffixIndexByDFS(Node *n, int labelHeight)
             }
         }
         n->suffixIndex = totalStringLength - labelHeight;
-        if (print_enabled){
+        if (print_enabled == 1){
                 //print suffix index
                 asprintf(&printer, " [%d]\n", n->suffixIndex);
                 buildString(&tree_string,printer);
@@ -393,7 +393,7 @@ char *getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, 
     }
     buildSuffixTree(string1, string2, print_tree);
     doTraversal(root, 0, &maxHeight, &substringStartIndex);
-    char *substring = NULL;
+    static char *substring = NULL;
     char *printer;
     int k;
     buildString(&substring,"");
@@ -432,6 +432,8 @@ void buildString(char** current_text, const char *new_text){
 
 }
 
-void getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree){
+int getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree){
 
+
+        return 0;
 }

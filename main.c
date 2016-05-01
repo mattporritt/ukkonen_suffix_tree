@@ -119,12 +119,12 @@ void self_test(){
         printf(lcs, 's');
         int compare_result3 = strcmp(lcs, "abxa, of length: 4\n");
         assert(compare_result3 == 0);
-        memset(tree_string,0,strlen(tree_string)); //clear string from previous test
+        memset(lcs,0,strlen(lcs)); //clear string from previous test; //clear string from previous test
 
         printf("Longest Common Substring in xabxaabxa and babxba is: ");
         lcs = getLongestCommonSubstring((unsigned char *)"xabxaabxa",
                                         (unsigned char *)"babxba",
-                                        1);
+                                        0);
 
         printf(lcs, 's');
         int compare_result4 = strcmp(lcs, "abx, of length: 3\n");
