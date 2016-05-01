@@ -81,11 +81,11 @@ suffixIndex. suffixIndex for leaf edges will be >= 0 and
 for non-leaf edges will be -1*/
 int buildSuffixTree(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
 
-int doTraversal(Node *n, int labelHeight, int* maxHeight,
-int* substringStartIndex);
+int doTraversal(Node *n, int labelHeight, int* maxHeight, int* substringStartIndex);
+int allSubstringsTraversal(Node *n, int labelHeight);
 
 char *getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
-int getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
+char *getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
 
 /*
  * builds string that contains text version of suffix tree

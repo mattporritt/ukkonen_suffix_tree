@@ -381,6 +381,46 @@ int* substringStartIndex)
     return n->suffixIndex;
 }
 
+int allSubstringsTraversal(Node *n, int labelHeight)
+{
+    if(n == NULL)
+    {
+        return 0;
+    }
+    int i=0;
+    int ret = -1;
+    if(n->suffixIndex < 0) //If it is internal node
+    {
+        for (i = 0; i < MAX_CHAR; i++)
+        {
+            if(n->children[i] != NULL)
+            {
+                ret = allSubstringsTraversal(n->children[i], labelHeight + edgeLength(n->children[i]));
+
+                if(n->suffixIndex == -1)
+                    n->suffixIndex = ret;
+                else if((n->suffixIndex == -2 && ret == -3) ||
+                    (n->suffixIndex == -3 && ret == -2) ||
+                    n->suffixIndex == -4)
+                {
+                    n->suffixIndex = -4;//Mark node as XY
+                    if(labelHeight > 2){
+                            if (subtrings[i].stringend == 0 || n->start < subtrings[i].stringstart){
+                                    subtrings[i].stringstart = n->start;
+                                    subtrings[i].stringend = *(n->end);
+                            }
+                    }
+                }
+            }
+        }
+    }
+    else if(n->suffixIndex > -1 && n->suffixIndex < string1Length)//suffix of X
+        return -2;//Mark node as X
+    else if(n->suffixIndex >= string1Length)//suffix of Y
+        return -3;//Mark node as Y
+    return n->suffixIndex;
+}
+
 char *getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, unsigned char print_tree)
 {
     int maxHeight = 0;
@@ -393,33 +433,52 @@ char *getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, 
     }
     buildSuffixTree(string1, string2, print_tree);
     doTraversal(root, 0, &maxHeight, &substringStartIndex);
-    static char *substring = NULL;
+    static char *longest_substring = NULL;
     char *printer;
     int k;
-    buildString(&substring,"");
+    buildString(&longest_substring,"");
     for (k=0; k<maxHeight; k++){
             asprintf(&printer, "%c", text[k + substringStartIndex]);
-            buildString(&substring,printer);
+            buildString(&longest_substring,printer);
             free(printer);
 
     }
     if(k == 0){
-            buildString(&substring,"No common substring");
+            buildString(&longest_substring,"No common substring");
     }
     else{
             asprintf(&printer, ", of length: %d",maxHeight);
-            buildString(&substring,printer);
+            buildString(&longest_substring,printer);
             free(printer);
     }
-    buildString(&substring,"\n");
+    buildString(&longest_substring,"\n");
 
 
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
 
-    return substring;
+    return longest_substring;
 }
 
+char *getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree){
+        //First check if we have two strings
+        if((string1 == NULL) || (string2 == NULL)){
+                return NULL;
+        }
+        buildSuffixTree(string1, string2, print_tree);
+
+        int i = 0;
+        allSubstringsTraversal(root, 0);
+
+        for (i = 0; i < MAX_CHAR; i++){
+                if(subtrings[i].stringend != 0){
+                        printf("string start: %d \n",subtrings[i].stringstart);
+                        printf("string end: %d \n",subtrings[i].stringend);
+                }
+        }
+
+        return NULL;
+}
 
 void buildString(char** current_text, const char *new_text){
         size_t new_len = strlen(new_text) + 1; /* + 1 for terminating NULL */
@@ -430,10 +489,4 @@ void buildString(char** current_text, const char *new_text){
         *current_text = realloc(*current_text, (new_len + current_len));
         strncat(*current_text, new_text, new_len);
 
-}
-
-int getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree){
-
-
-        return 0;
 }

@@ -131,6 +131,14 @@ void self_test(){
         assert(compare_result4 == 0);
         printf("Longest Common Substring test: Passed\n\n");
 
+        printf("All Common substrings test: \n");
+       // char *acs;
+
+        printf("All Common Substrings in orangeisatypeoffruit and fruitsomestugfruitgoeshereorange are: \n");
+        getAllCommonSubstrings((unsigned char *)"orangeisatypeoffruit",
+                                        (unsigned char *)"fruitsomestugfruitgoeshereorange",
+                                        0);
+
         printf("done");
 
 }
