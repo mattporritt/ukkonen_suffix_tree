@@ -432,6 +432,6 @@ void buildString(char** current_text, const char *new_text){
 
 }
 
-void getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree){
+int getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree){
 
 }
