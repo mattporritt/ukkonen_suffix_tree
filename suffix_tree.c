@@ -381,45 +381,55 @@ int* substringStartIndex)
     return n->suffixIndex;
 }
 
-int getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, unsigned char print_tree)
+char *getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, unsigned char print_tree)
 {
     int maxHeight = 0;
     int substringStartIndex = 0;
 
+
     //First check if we have two strings
     if((string1 == NULL) || (string2 == NULL)){
-            return 1;
+            return NULL;
     }
     buildSuffixTree(string1, string2, print_tree);
     doTraversal(root, 0, &maxHeight, &substringStartIndex);
-
+    char *substring = NULL;
+    char *printer;
     int k;
+    buildString(&substring,"");
     for (k=0; k<maxHeight; k++){
-            printf("%c", text[k + substringStartIndex]);
+            asprintf(&printer, "%c", text[k + substringStartIndex]);
+            buildString(&substring,printer);
+            free(printer);
+
     }
     if(k == 0){
-            printf("No common substring");
+            buildString(&substring,"No common substring");
     }
     else{
-            printf(", of length: %d",maxHeight);
+            asprintf(&printer, ", of length: %d",maxHeight);
+            buildString(&substring,printer);
+            free(printer);
     }
-    printf("\n");
+    buildString(&substring,"\n");
+
 
     //Free the dynamically allocated memory
     freeSuffixTreeByPostOrder(root);
 
-    return 0;
+    return substring;
 }
 
 
-void buildString(char** current_text, char *new_text){
+void buildString(char** current_text, const char *new_text){
         size_t new_len = strlen(new_text) + 1; /* + 1 for terminating NULL */
         if (*current_text == NULL){
-                *current_text = (char*) malloc(new_len);
+                *current_text = malloc(new_len);
         }
         size_t current_len = strlen(*current_text);
-        *current_text = (char *) realloc(*current_text, (new_len + current_len));
+        *current_text = realloc(*current_text, (new_len + current_len));
         strncat(*current_text, new_text, new_len);
+
 }
 
 void getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree){

@@ -106,14 +106,33 @@ void self_test(){
         printf(tree_string, 's');
         int compare_result2 = strcmp(tree_string, tree_output2);
         assert(compare_result2 == 0);
+        memset(tree_string,0,strlen(tree_string)); //clear string from previous test
+        printf("Suffix tree build test: Passed\n\n");
 
-        printf("Suffix tree build test: Passed\n");
+        printf("Longest substrings test: \n");
+        char *lcs;
 
-        //printf("All common substrings test: \n");
-        //printf("Longest Common Substring in xabxac and abcabxabcd is: ");
-        //buildSuffixTree(input, NULL, 1);
+        printf("Longest Common Substring in xabxac and abcabxabcd is: ");
+        lcs = getLongestCommonSubstring((unsigned char *)"xabxac",
+                                        (unsigned char *)"abcabxabcd",
+                                        0);
+        printf(lcs, 's');
+        int compare_result3 = strcmp(lcs, "abxa, of length: 4\n");
+        assert(compare_result3 == 0);
+        memset(tree_string,0,strlen(tree_string)); //clear string from previous test
+
+        printf("Longest Common Substring in xabxaabxa and babxba is: ");
+        lcs = getLongestCommonSubstring((unsigned char *)"xabxaabxa",
+                                        (unsigned char *)"babxba",
+                                        1);
+
+        printf(lcs, 's');
+        int compare_result4 = strcmp(lcs, "abx, of length: 3\n");
+        assert(compare_result4 == 0);
+        printf("Longest Common Substring test: Passed\n\n");
 
         printf("done");
+
 }
 
 int main(int argc, char **argv)
