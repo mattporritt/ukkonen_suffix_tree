@@ -381,7 +381,7 @@ int* substringStartIndex)
     return n->suffixIndex;
 }
 
-int allSubstringsTraversal(Node *n, int labelHeight)
+int allCommonSubstringsTraversal(Node *n, int labelHeight)
 {
     if(n == NULL)
     {
@@ -395,7 +395,7 @@ int allSubstringsTraversal(Node *n, int labelHeight)
         {
             if(n->children[i] != NULL)
             {
-                ret = allSubstringsTraversal(n->children[i], labelHeight + edgeLength(n->children[i]));
+                ret = allCommonSubstringsTraversal(n->children[i], labelHeight + edgeLength(n->children[i]));
 
                 if(n->suffixIndex == -1)
                     n->suffixIndex = ret;
@@ -468,7 +468,7 @@ char *getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, uns
         buildSuffixTree(string1, string2, print_tree);
 
         int i = 0;
-        allSubstringsTraversal(root, 0);
+        allCommonSubstringsTraversal(root, 0);
 
         for (i = 0; i < MAX_CHAR; i++){
                 if(subtrings[i].stringend != 0){
@@ -478,6 +478,55 @@ char *getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, uns
         }
 
         return NULL;
+}
+
+int traverseEdge(unsigned char *str, int idx, int start, int end){
+    int k = 0;
+    //Traverse the edge with character by character matching
+    for(k=start; k<=end && str[idx] != '\0'; k++, idx++)
+    {
+        if(text[k] != str[idx])
+            return -1;  // mo match
+    }
+    if(str[idx] == '\0')
+        return 1;  // match
+    return 0;  // more characters yet to match
+}
+
+int substringTraversal(Node *n,unsigned char* str, int idx){
+    if(n == NULL)
+    {
+        return -1; // no match
+    }
+    int res = -1;
+    //If node n is not root node, then traverse edge
+    //from node n's parent to node n.
+    if(n->start != -1)
+    {
+        res = traverseEdge(str, idx, n->start, *(n->end));
+        if(res != 0)
+            return res;  // match (res = 1) or no match (res = -1)
+    }
+    //Get the character index to search
+    idx = idx + edgeLength(n);
+    //If there is an edge from node n going out
+    //with current character str[idx], travrse that edge
+    if(n->children[str[idx]] != NULL)
+        return substringTraversal(n->children[str[idx]], str, idx);
+    else
+        return -1;  // no match
+}
+
+int checkForSubString(unsigned char* search_string, unsigned char* source_string){
+        buildSuffixTree(source_string, NULL, 0);
+        int res = substringTraversal(root, search_string, 0);
+        //Free the dynamically allocated memory
+        freeSuffixTreeByPostOrder(root);
+
+        if(res == 1)
+                return 1;
+        else
+                return 0;
 }
 
 void buildString(char** current_text, const char *new_text){
