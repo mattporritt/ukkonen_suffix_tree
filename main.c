@@ -153,6 +153,11 @@ void self_test(){
                                                      (unsigned char *)"AABAACAADAABAAABAA");
         assert(all_substrings == 1);
 
+        printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AABAACAAD");
+        all_substrings = checkAllSubStringOccurences((unsigned char *)"AABAACAAD",
+                                                     (unsigned char *)"AABAACAADAABAAABAA");
+        assert(all_substrings == 1);
+
         printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AA");
         all_substrings = checkAllSubStringOccurences((unsigned char *)"AA",
                                                      (unsigned char *)"AABAACAADAABAAABAA");
