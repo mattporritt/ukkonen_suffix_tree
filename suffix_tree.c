@@ -517,9 +517,80 @@ int substringTraversal(Node *n,unsigned char* str, int idx){
         return -1;  // no match
 }
 
+int doTraversalToCountLeaf(Node *n){
+    if(n == NULL)
+        return 0;
+    if(n->suffixIndex > -1)
+    {
+        printf("\nFound at position: %d", n->suffixIndex);
+        return 1;
+    }
+    int count = 0;
+    int i = 0;
+    for (i = 0; i < MAX_CHAR; i++)
+    {
+        if(n->children[i] != NULL)
+        {
+            count += doTraversalToCountLeaf(n->children[i]);
+        }
+    }
+    return count;
+}
+
+int countLeaf(Node *n){
+    if(n == NULL)
+        return 0;
+    return doTraversalToCountLeaf(n);
+}
+
+int substringAllOccurenceTraversal(Node *n, unsigned char* str, int idx){
+    if(n == NULL)
+    {
+        return -1; // no match
+    }
+    int res = -1;
+    //If node n is not root node, then traverse edge
+    //from node n's parent to node n.
+    if(n->start != -1)
+    {
+        res = traverseEdge(str, idx, n->start, *(n->end));
+        if(res == -1)  //no match
+            return -1;
+        if(res == 1) //match
+        {
+            if(n->suffixIndex > -1)
+                printf("\nsubstring count: 1 and position: %d",
+                               n->suffixIndex);
+            else
+                printf("\nsubstring count: %d", countLeaf(n));
+            return 1;
+        }
+    }
+    //Get the character index to search
+    idx = idx + edgeLength(n);
+    //If there is an edge from node n going out
+    //with current character str[idx], travrse that edge
+    if(n->children[str[idx]] != NULL)
+        return substringAllOccurenceTraversal(n->children[str[idx]], str, idx);
+    else
+        return -1;  // no match
+}
+
 int checkForSubString(unsigned char* search_string, unsigned char* source_string){
         buildSuffixTree(source_string, NULL, 0);
         int res = substringTraversal(root, search_string, 0);
+        //Free the dynamically allocated memory
+        freeSuffixTreeByPostOrder(root);
+
+        if(res == 1)
+                return 1;
+        else
+                return 0;
+}
+
+int checkAllSubStringOccurences(unsigned char* search_string, unsigned char* source_string){
+        buildSuffixTree(source_string, NULL, 0);
+        int res = substringAllOccurenceTraversal(root, search_string, 0);
         //Free the dynamically allocated memory
         freeSuffixTreeByPostOrder(root);
 

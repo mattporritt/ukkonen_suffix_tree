@@ -145,6 +145,25 @@ void self_test(){
         assert(is_substring == 0);
         printf("Substrings test: Passed\n\n");
 
+        printf("All occurences of Substring test: \n");
+        int all_substrings = 0;
+
+        printf("Text: AABAACAADAABAAABAA, Pattern to search: AABA");
+        all_substrings = checkAllSubStringOccurences((unsigned char *)"AABA",
+                                                     (unsigned char *)"AABAACAADAABAAABAA");
+        assert(all_substrings == 1);
+
+        printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AA");
+        all_substrings = checkAllSubStringOccurences((unsigned char *)"AA",
+                                                     (unsigned char *)"AABAACAADAABAAABAA");
+        assert(all_substrings == 1);
+
+        printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AA");
+               all_substrings = checkAllSubStringOccurences((unsigned char *)"ZZ",
+                                                            (unsigned char *)"AABAACAADAABAAABAA");
+               assert(all_substrings == 0);
+        printf("\nAll occurences of Substring test: Passed\n\n");
+
 //        printf("All Common substrings test: \n");
 //
 //        printf("All Common Substrings in orangeisatypeoffruit and fruitsomestugfruitgoeshereorange are: \n");

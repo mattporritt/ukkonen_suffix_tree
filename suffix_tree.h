@@ -83,11 +83,16 @@ int buildSuffixTree(unsigned char *string1, unsigned char *string2, unsigned cha
 
 int doTraversal(Node *n, int labelHeight, int* maxHeight, int* substringStartIndex);
 int allCommonSubstringsTraversal(Node *n, int labelHeight);
+int substringAllOccurenceTraversal(Node *n, unsigned char* str, int idx);
 
 char *getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
 char *getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
 
 int checkForSubString(unsigned char* search_string, unsigned char* source_string);
+int checkAllSubStringOccurences(unsigned char* search_string, unsigned char* source_string);
+
+int doTraversalToCountLeaf(Node *n);
+int countLeaf(Node *n);
 
 int substringTraversal(Node *n, unsigned char* str, int idx);
 
