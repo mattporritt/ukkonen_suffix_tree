@@ -89,7 +89,7 @@ char *getLongestCommonSubstring(unsigned char *string1, unsigned char *string2, 
 char *getAllCommonSubstrings(unsigned char *string1, unsigned char *string2, unsigned char print_tree);
 
 int checkForSubString(unsigned char* search_string, unsigned char* source_string);
-int checkAllSubStringOccurences(unsigned char* search_string, unsigned char* source_string);
+int *checkAllSubStringOccurences(unsigned char* search_string, unsigned char* source_string);
 
 int doTraversalToCountLeaf(Node *n);
 int countLeaf(Node *n);

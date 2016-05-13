@@ -145,28 +145,62 @@ void self_test(){
         assert(is_substring == 0);
         printf("Substrings test: Passed\n\n");
 
-        printf("All occurences of Substring test: \n");
-        int all_substrings = 0;
+        printf("All occurrences of Substring test: \n");
+        int *all_substrings;
+        size_t i = 0;
 
-        printf("Text: AABAACAADAABAAABAA, Pattern to search: AABA");
+        printf("Text: AABAACAADAABAAABAA, Pattern to search: AABA\n");
         all_substrings = checkAllSubStringOccurences((unsigned char *)"AABA",
                                                      (unsigned char *)"AABAACAADAABAAABAA");
-        assert(all_substrings == 1);
+        assert(all_substrings[0] == 3);
+        assert(all_substrings[1] == 13);
+        assert(all_substrings[2] == 9);
+        assert(all_substrings[3] == 0);
 
-        printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AABAACAAD");
+        printf("Substring found count: %d\n", all_substrings[0]);
+        printf("Substrings found at positions: ");
+        for( i = 1; i <all_substrings[0] + 1; i++)
+        {
+            printf ("%d,",all_substrings[i]);
+        }
+        free(all_substrings);
+
+        printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AABAACAAD\n");
         all_substrings = checkAllSubStringOccurences((unsigned char *)"AABAACAAD",
                                                      (unsigned char *)"AABAACAADAABAAABAA");
-        assert(all_substrings == 1);
+        assert(all_substrings[0] == 1);
+        assert(all_substrings[1] == 0);
 
-        printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AA");
+        printf("Substring found count: %d\n", all_substrings[0]);
+        printf("Substrings found at position: %d", all_substrings[1]);
+        free(all_substrings);
+
+        printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AA\n");
         all_substrings = checkAllSubStringOccurences((unsigned char *)"AA",
                                                      (unsigned char *)"AABAACAADAABAAABAA");
-        assert(all_substrings == 1);
+        assert(all_substrings[0] == 7);
+        assert(all_substrings[1] == 16);
+        assert(all_substrings[2] == 12);
+        assert(all_substrings[3] == 13);
+        assert(all_substrings[4] == 9);
+        assert(all_substrings[5] == 0);
+        assert(all_substrings[6] == 3);
+        assert(all_substrings[7] == 6);
 
-        printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: AA");
-               all_substrings = checkAllSubStringOccurences((unsigned char *)"ZZ",
-                                                            (unsigned char *)"AABAACAADAABAAABAA");
-               assert(all_substrings == 0);
+        printf("Substring found count: %d\n", all_substrings[0]);
+        printf("Substrings found at positions: ");
+        for( i = 1; i <all_substrings[0] + 1; i++)
+        {
+            printf ("%d,",all_substrings[i]);
+        }
+        free(all_substrings);
+
+
+        printf("\n\nText: AABAACAADAABAAABAA, Pattern to search: ZZ\n");
+        all_substrings = checkAllSubStringOccurences((unsigned char *)"ZZ",
+                                                     (unsigned char *)"AABAACAADAABAAABAA");
+        assert(all_substrings[0] == 0);
+        printf("No Substrings found\n");
         printf("\nAll occurences of Substring test: Passed\n\n");
 
 //        printf("All Common substrings test: \n");

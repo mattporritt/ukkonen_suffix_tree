@@ -14,6 +14,7 @@ char *tree_string = NULL; //String to hold text version of tree
 Node *root = NULL; //Pointer to root node
 Node *lastNewNode = NULL;
 Node *activeNode = NULL;
+Vector vector;
 
 /*activeEdge is represented as input string character
   index (not the character itself)*/
@@ -523,7 +524,7 @@ int doTraversalToCountLeaf(Node *n){
         return 0;
     if(n->suffixIndex > -1)
     {
-        printf("\nFound at position: %d", n->suffixIndex);
+        vector_append(&vector, n->suffixIndex);
         return 1;
     }
     int count = 0;
@@ -559,11 +560,14 @@ int substringAllOccurenceTraversal(Node *n, unsigned char* str, int idx){
             return -1;
         if(res == 1) //match
         {
-            if(n->suffixIndex > -1)
-                printf("\nsubstring count: 1 and position: %d",
-                               n->suffixIndex);
-            else
-                printf("\nsubstring count: %d", countLeaf(n));
+            if(n->suffixIndex > -1){
+                vector_set(&vector, 0, 1);
+                vector_append(&vector, n->suffixIndex);
+            }
+            else{
+                int leaf_count = countLeaf(n);
+                vector_set(&vector, 0, leaf_count);
+            }
             return 1;
         }
     }
@@ -589,16 +593,26 @@ int checkForSubString(unsigned char* search_string, unsigned char* source_string
                 return 0;
 }
 
-int checkAllSubStringOccurences(unsigned char* search_string, unsigned char* source_string){
+int *checkAllSubStringOccurences(unsigned char* search_string, unsigned char* source_string){
+        vector_init(&vector); //Initiate the dynamic array
+        vector_set(&vector, 0, 0); //Make the first element 0
+
         buildSuffixTree(source_string, NULL, 0);
         int res = substringAllOccurenceTraversal(root, search_string, 0);
         //Free the dynamically allocated memory
         freeSuffixTreeByPostOrder(root);
 
-        if(res == 1)
-                return 1;
-        else
-                return 0;
+        const int len = vector.size * sizeof(int);
+        int * result_array = malloc(len);
+
+        if(res == 1){
+                memcpy(result_array, vector.data, len);
+        }
+        else{
+                result_array[0] = 0;
+        }
+        vector_free(&vector);
+        return result_array;
 }
 
 void buildString(char** current_text, const char *new_text){

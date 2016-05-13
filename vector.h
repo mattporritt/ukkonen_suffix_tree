@@ -6,7 +6,7 @@
  * Constant used for starting capacity of Vectors
  * Value is arbitrary and can be tuned
  */
-#define VECTOR_INITIAL_CAPACITY 10
+#define VECTOR_INITIAL_CAPACITY 1
 
 // Define a vector type
 typedef struct {
