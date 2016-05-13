@@ -36,7 +36,16 @@ Or to run after the CLI executable has been built:
 The best place to start when extending or exploring current functionality is the `self_test()` function in the `main.c` file
 
 ## Usage
-TODO
+Basic usage can be found by running `suffix_tree --help`. This will output
+```
+Usage: suffix_tree [OPTION...] STRING [STRING]
+
+  -p, --print                Print the tree for the supplied string
+  -t, --test                 Run self tests
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+
+```
 
 ## TODO
 * Provide command line options for currently implemented features
