@@ -129,6 +129,7 @@ void self_test(){
         printf(lcs, 's');
         int compare_result4 = strcmp(lcs, "abx, of length: 3\n");
         assert(compare_result4 == 0);
+        memset(lcs,0,strlen(lcs)); //clear string from previous test;
         printf("Longest Common Substring test: Passed\n\n");
 
         printf("Substrings test: \n");
@@ -202,6 +203,47 @@ void self_test(){
         assert(all_substrings[0] == 0);
         printf("No Substrings found\n");
         printf("\nAll occurences of Substring test: Passed\n\n");
+
+        printf("Longest Repeated Substring test: \n");
+        char * lrs;
+        int lcs_compare;
+
+        printf("Longest Repeated Substring in AAAAAAAAAA is: ");
+        lrs = getLongestRepeatedSubstring((unsigned char *)"AAAAAAAAAA");
+        lcs_compare = strcmp(lrs, "AAAAAAAAA");
+        assert(lcs_compare == 0);
+        printf(lrs, 's');
+        memset(lrs,0,strlen(lrs)); //clear string from previous test;
+
+        printf("\nLongest Repeated Substring in ABABABA is: ");
+        lrs = getLongestRepeatedSubstring((unsigned char *)"ABABABA");
+        lcs_compare = strcmp(lrs, "ABABA");
+        assert(lcs_compare == 0);
+        printf(lrs, 's');
+        memset(lrs,0,strlen(lrs)); //clear string from previous test;
+
+        printf("\nLongest Repeated Substring in ABCDEFG is: ");
+        lrs = getLongestRepeatedSubstring((unsigned char *)"ABCDEFG");
+        lcs_compare = strcmp(lrs, "No repeated substring");
+        assert(lcs_compare == 0);
+        printf(lrs, 's');
+        memset(lrs,0,strlen(lrs)); //clear string from previous test;
+
+        printf("\nLongest Repeated Substring in pqrpqpqabab is: ");
+        lrs = getLongestRepeatedSubstring((unsigned char *)"pqrpqpqabab");
+        lcs_compare = strcmp(lrs, "ab");
+        assert(lcs_compare == 0);
+        printf(lrs, 's');
+        memset(lrs,0,strlen(lrs)); //clear string from previous test;
+
+        printf("\nLongest Repeated Substring in abcpqrabpqpq is: ");
+        lrs = getLongestRepeatedSubstring((unsigned char *)"abcpqrabpqpq");
+        lcs_compare = strcmp(lrs, "ab");
+        assert(lcs_compare == 0);
+        printf(lrs, 's');
+        memset(lrs,0,strlen(lrs)); //clear string from previous test;
+
+        printf("\nLongest Repeated Substring test: Passed\n\n");
 
 //        printf("All Common substrings test: \n");
 //

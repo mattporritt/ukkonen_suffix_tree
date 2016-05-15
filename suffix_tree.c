@@ -581,6 +581,34 @@ int substringAllOccurenceTraversal(Node *n, unsigned char* str, int idx){
         return -1;  // no match
 }
 
+void longestRepeatedSubstringTraversal(Node *n, int labelHeight,
+                                       int* maxHeight,
+                                       int* substringStartIndex){
+    if(n == NULL)
+    {
+        return;
+    }
+    int i=0;
+    if(n->suffixIndex == -1) //If it is internal node
+    {
+        for (i = 0; i < MAX_CHAR; i++)
+        {
+            if(n->children[i] != NULL)
+            {
+                    longestRepeatedSubstringTraversal(n->children[i], labelHeight +
+                                edgeLength(n->children[i]), maxHeight,
+                                 substringStartIndex);
+            }
+        }
+    }
+    else if(n->suffixIndex > -1 &&
+                (*maxHeight < labelHeight - edgeLength(n)))
+    {
+        *maxHeight = labelHeight - edgeLength(n);
+        *substringStartIndex = n->suffixIndex;
+    }
+}
+
 int checkForSubString(unsigned char* search_string, unsigned char* source_string){
         buildSuffixTree(source_string, NULL, 0);
         int res = substringTraversal(root, search_string, 0);
@@ -615,6 +643,33 @@ int *checkAllSubStringOccurences(unsigned char* search_string, unsigned char* so
         return result_array;
 }
 
+char * getLongestRepeatedSubstring(unsigned char* source_string){
+        buildSuffixTree(source_string, NULL, 0);
+        int maxHeight = 0;
+        int substringStartIndex = 0;
+        static char *longest_repeat;
+        char *printer;
+
+        longestRepeatedSubstringTraversal(root, 0, &maxHeight, &substringStartIndex);
+        freeSuffixTreeByPostOrder(root);
+
+        longest_repeat = malloc(maxHeight * 4);
+        longest_repeat[0] = '\0';
+
+        int k;
+        for (k=0; k<maxHeight; k++){
+                asprintf(&printer, "%c", text[k + substringStartIndex]);
+                strcat(longest_repeat, printer);
+                free(printer);
+
+        }
+        if(k == 0){
+                buildString(&longest_repeat,"No repeated substring");
+        }
+
+        return longest_repeat;
+}
+
 void buildString(char** current_text, const char *new_text){
         size_t new_len = strlen(new_text) + 1; /* + 1 for terminating NULL */
         if (*current_text == NULL){
@@ -623,7 +678,6 @@ void buildString(char** current_text, const char *new_text){
         size_t current_len = strlen(*current_text);
         *current_text = realloc(*current_text, (new_len + current_len));
         strncat(*current_text, new_text, new_len);
-
 }
 
 /*
