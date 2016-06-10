@@ -11,7 +11,7 @@
 void self_test();
 unsigned char *input_text; //Input string 1 (for suffix tree)
 unsigned char *input_text2; //Input string 2 (for generalized suffix tree)
-int print_tree = 0;
+int opt_print_tree = 0;
 
 // Process command line options and arguments
 static int
@@ -28,7 +28,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
                 }
                 case 'p': //Print the generated tree
                 {
-                        print_tree = 1;
+                        opt_print_tree = 1;
                         break;
                 }
                 case ARGP_KEY_ARG: //Process the command line arguments
@@ -54,9 +54,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
                         }
                         else {
                                 // Construct the tree and process based on supplied options
-                                buildSuffixTree(input_text, input_text2, print_tree);
+                                buildSuffixTree(input_text, input_text2, opt_print_tree);
                                 freeSuffixTreeByPostOrder(root);
-                                if (print_tree){
+                                if (opt_print_tree){
                                         printf(tree_string, 's');
                                 }
                         }
