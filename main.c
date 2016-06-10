@@ -12,6 +12,7 @@ void self_test();
 unsigned char *input_text; //Input string 1 (for suffix tree)
 unsigned char *input_text2; //Input string 2 (for generalized suffix tree)
 int opt_print_tree = 0;
+int opt_lcs = 0;
 
 // Process command line options and arguments
 static int
@@ -31,13 +32,18 @@ parse_opt (int key, char *arg, struct argp_state *state)
                         opt_print_tree = 1;
                         break;
                 }
+                case 'l': //Find Longest Common Substring (LCS)
+                {
+                        opt_lcs = 1;
+                        break;
+                }
                 case ARGP_KEY_ARG: //Process the command line arguments
                 {
                         (*arg_count)--;
-                        if (*arg_count == 1){
+                        if (*arg_count == 2){
                                 input_text = (unsigned char*)arg;
                         }
-                        else if (*arg_count == 0){
+                        else if (*arg_count == 1){
                                 input_text2 = (unsigned char*)arg;
                         }
 
@@ -46,18 +52,33 @@ parse_opt (int key, char *arg, struct argp_state *state)
                 case ARGP_KEY_END:
                 {
                         printf ("\n");
-                        if (*arg_count >= 2){
+                        if (*arg_count >= 3){
                                 argp_failure (state, 1, 0, "too few arguments");
                         }
                         else if (*arg_count < 0){
                                 argp_failure (state, 1, 0, "too many arguments");
                         }
                         else {
-                                // Construct the tree and process based on supplied options
-                                buildSuffixTree(input_text, input_text2, opt_print_tree);
-                                freeSuffixTreeByPostOrder(root);
                                 if (opt_print_tree){
+                                        // Construct the tree and process based on supplied options
+                                        buildSuffixTree(input_text, input_text2, opt_print_tree);
+                                        freeSuffixTreeByPostOrder(root);
                                         printf(tree_string, 's');
+                                }
+                                if (opt_lcs){
+                                        char *lcs;
+                                        if(!input_text2){
+                                                argp_failure (state, 1, 0, "missing comparison string");
+                                        }
+                                        printf("Longest Common Substring in %s and %s is: ",
+                                               input_text,
+                                               input_text2);
+                                        lcs = getLongestCommonSubstring(input_text,
+                                                                        input_text2,
+                                                                        opt_print_tree);
+
+                                        printf(lcs, 's');
+
                                 }
                         }
                 }
@@ -262,10 +283,11 @@ int main(int argc, char **argv)
         {
                 { "print", 'p', 0, 0, "Print the tree for the supplied string"},
                 { "test", 't', 0, 0, "Run self tests"},
+                { "lcs", 'l', 0, 0, "Find longest common substring"},
                 { 0 }
         };
 
-        int arg_count = 2;
+        int arg_count = 3;
         struct argp argp = { options, parse_opt, "STRING [STRING]" };
         return argp_parse (&argp, argc, argv, 0, 0, &arg_count);
 
