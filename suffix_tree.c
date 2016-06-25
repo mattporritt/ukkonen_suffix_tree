@@ -358,19 +358,13 @@ int* substringStartIndex)
                     (n->suffixIndex == -3 && ret == -2) ||
                     n->suffixIndex == -4)
                 {
-                    n->suffixIndex = -4;//Mark node as XY
-                    //Keep track of deepest node
-//                    if(labelHeight > 2)
-                    if(*maxHeight < labelHeight)
+                    n->suffixIndex = -4; //Mark node as XY
+
+                    if(*maxHeight < labelHeight) //Keep track of deepest node
                     {
                         *maxHeight = labelHeight;
                         *substringStartIndex = *(n->end) -
                             labelHeight + 1;
-//                            if (subtrings[i].stringend == 0 || n->start < subtrings[i].stringstart){
-//                                    subtrings[i].stringstart = n->start;
-//                                    subtrings[i].stringend = *(n->end);
-//                            }
-
                     }
                 }
             }
