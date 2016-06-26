@@ -13,6 +13,7 @@ unsigned char *input_text; //Input string 1 (for suffix tree)
 unsigned char *input_text2; //Input string 2 (for generalized suffix tree)
 int opt_print_tree = 0;
 int opt_lcs = 0;
+int opt_acs = 0;
 
 // Process command line options and arguments
 static int
@@ -37,13 +38,18 @@ parse_opt (int key, char *arg, struct argp_state *state)
                         opt_lcs = 1;
                         break;
                 }
+                case 'a': //Find Longest Common Substring (LCS)
+                {
+                        opt_acs = 1;
+                        break;
+                }
                 case ARGP_KEY_ARG: //Process the command line arguments
                 {
                         (*arg_count)--;
-                        if (*arg_count == 2){
+                        if (*arg_count == 3){
                                 input_text = (unsigned char*)arg;
                         }
-                        else if (*arg_count == 1){
+                        else if (*arg_count == 2){
                                 input_text2 = (unsigned char*)arg;
                         }
 
@@ -52,7 +58,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
                 case ARGP_KEY_END:
                 {
                         printf ("\n");
-                        if (*arg_count >= 3){
+                        if (*arg_count >= 4){
                                 argp_failure (state, 1, 0, "too few arguments");
                         }
                         else if (*arg_count < 0){
@@ -78,6 +84,21 @@ parse_opt (int key, char *arg, struct argp_state *state)
                                                                         opt_print_tree);
 
                                         printf(lcs, 's');
+
+                                }
+                                if (opt_acs){
+                                        char *acs;
+                                        if(!input_text2){
+                                                argp_failure (state, 1, 0, "missing comparison string");
+                                        }
+                                        printf("All Common Substrings in %s and %s are: ",
+                                               input_text,
+                                               input_text2);
+                                        acs = getAllCommonSubstrings(input_text,
+                                                                     input_text2,
+                                                                     opt_print_tree);
+
+                                        printf(acs, 's');
 
                                 }
                         }
@@ -284,10 +305,11 @@ int main(int argc, char **argv)
                 { "print", 'p', 0, 0, "Print the tree for the supplied string"},
                 { "test", 't', 0, 0, "Run self tests"},
                 { "lcs", 'l', 0, 0, "Find longest common substring"},
+                { "acs", 'a', 0, 0, "Find all common substring"},
                 { 0 }
         };
 
-        int arg_count = 3;
+        int arg_count = 4;
         struct argp argp = { options, parse_opt, "STRING [STRING]" };
         return argp_parse (&argp, argc, argv, 0, 0, &arg_count);
 

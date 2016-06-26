@@ -41,6 +41,7 @@ Basic usage can be found by running `suffix_tree --help`. This will output
 ```
 Usage: suffix_tree [OPTION...] STRING [STRING]
 
+  -a, --acs                  Find all common substring
   -l, --lcs                  Find longest common substring
   -p, --print                Print the tree for the supplied string
   -t, --test                 Run self tests
